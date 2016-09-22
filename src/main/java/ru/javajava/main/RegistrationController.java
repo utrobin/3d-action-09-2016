@@ -1,6 +1,5 @@
 package ru.javajava.main;
 
-//импорты появятся автоматически, если вы выбираете класс из выпадающего списка или же после alt+enter
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,40 +8,20 @@ import org.springframework.web.bind.annotation.*;
 import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountService;
 
-/**
- * Created by Solovyev on 06/09/16.
- */
-
-//Метка по которой спринг находит контроллер
 @RestController
 public class RegistrationController {
 
-
     private final AccountService accountService;
 
-
-    /**
-     * Важное место. Мы не управляем жизненным циклом нашего класса. За нас это делает Spring. Аннотация говорит, что
-     * зависимости должны быть разрешены с помощью спрингового контекста{@see ApplicationContext}(реестра классов). В нем могут присутствовать,
-     * как наши сервисы(написанные нами), так и сервисы, предоставляемые спрингом.
-     * @param accountService - подставляет наш синглтон
-     */
     @Autowired
     public RegistrationController(AccountService accountService) {
         this.accountService = accountService;
     }
 
-    /**
-     * Я ориентировался на {@see http://docs.technopark.apiary.io/} . В методе что-то сделано сильно не так, как в документации.
-     * Что именно? Варианты ответа принимаются в slack {@see https://technopark-mail.slack.com/messages}
 
-     * @return - Возвращаем вместо id логин. Но это пока нормально.
-     */
-    @RequestMapping(path = "/api/user", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody UserProfile body)
+    @RequestMapping(path = "/api/signup", method = RequestMethod.POST)
+    public ResponseEntity signUp(@RequestBody UserProfile body)
     {
-        //Инкапсулированная проверка на null и на пустоту. Выглядит гораздо более читаемо
-
         String login = body.getLogin();
         String password = body.getPassword();
         String email = body.getEmail();
@@ -62,9 +41,10 @@ public class RegistrationController {
 
 
 
-    @RequestMapping(path = "/api/session", method = RequestMethod.POST)
+    @RequestMapping(path = "/api/signin", method = RequestMethod.POST)
     public ResponseEntity auth(@RequestParam(name = "login") String login,
                                 @RequestParam(name = "password") String password) {
+        
         if(StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password) ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{Error in parametrs}");
