@@ -35,16 +35,17 @@ public class RegistrationController {
     /**
      * Я ориентировался на {@see http://docs.technopark.apiary.io/} . В методе что-то сделано сильно не так, как в документации.
      * Что именно? Варианты ответа принимаются в slack {@see https://technopark-mail.slack.com/messages}
-     * @param login - реквест параметр
-     * @param password - =
-     * @param email- =
+
      * @return - Возвращаем вместо id логин. Но это пока нормально.
      */
     @RequestMapping(path = "/api/user", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestParam(name = "login") String login,
-                                @RequestParam(name = "password") String password,
-                                @RequestParam(name = "email") String email) {
+    public ResponseEntity login(@RequestBody UserProfile body)
+    {
         //Инкапсулированная проверка на null и на пустоту. Выглядит гораздо более читаемо
+
+        String login = body.getLogin();
+        String password = body.getPassword();
+        String email = body.getEmail();
         if (StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password)
                 || StringUtils.isEmpty(email)) {
@@ -93,5 +94,6 @@ public class RegistrationController {
             return login;
         }
     }
+
 
 }
