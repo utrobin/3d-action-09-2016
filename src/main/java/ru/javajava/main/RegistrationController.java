@@ -22,9 +22,9 @@ public class RegistrationController {
     @RequestMapping(path = "/api/signup", method = RequestMethod.POST)
     public ResponseEntity signUp(@RequestBody UserProfile body)
     {
-        String login = body.getLogin();
-        String password = body.getPassword();
-        String email = body.getEmail();
+        final String login = body.getLogin();
+        final String password = body.getPassword();
+        final String email = body.getEmail();
         if (StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password)
                 || StringUtils.isEmpty(email)) {
@@ -42,9 +42,9 @@ public class RegistrationController {
 
 
     @RequestMapping(path = "/api/signin", method = RequestMethod.POST)
-    public ResponseEntity auth(@RequestParam(name = "login") String login,
+    public ResponseEntity signIn(@RequestParam(name = "login") String login,
                                 @RequestParam(name = "password") String password) {
-        
+
         if(StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password) ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{Error in parametrs}");
