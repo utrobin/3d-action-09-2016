@@ -1,4 +1,4 @@
-package ru.mail.park.main;
+package ru.javajava.main;
 
 //импорты появятся автоматически, если вы выбираете класс из выпадающего списка или же после alt+enter
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import ru.mail.park.model.UserProfile;
-import ru.mail.park.services.AccountService;
+import ru.javajava.model.UserProfile;
+import ru.javajava.services.AccountService;
 
 /**
  * Created by Solovyev on 06/09/16.

@@ -1,4 +1,4 @@
-package ru.mail.park;
+package ru.javajava;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

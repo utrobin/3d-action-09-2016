@@ -1,4 +1,4 @@
-package ru.mail.park.model;
+package ru.javajava.model;
 
 /**
  * Created by Solovyev on 17/09/16.

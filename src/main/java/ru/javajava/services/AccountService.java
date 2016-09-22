@@ -1,9 +1,9 @@
-package ru.mail.park.services;
+package ru.javajava.services;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import ru.mail.park.model.UserProfile;
+import ru.javajava.model.UserProfile;
 
 import java.util.HashMap;
 import java.util.Map;
