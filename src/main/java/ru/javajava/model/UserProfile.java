@@ -1,12 +1,9 @@
 package ru.javajava.model;
 
-/**
- * Created by Solovyev on 17/09/16.
- */
 public class UserProfile {
-    private String login;
-    private String email;
-    private String password;
+    private final String login;
+    private final String email;
+    private final String password;
 
     public UserProfile(String login, String email, String password) {
         this.login = login;
