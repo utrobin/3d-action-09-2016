@@ -4,6 +4,7 @@ public class UserProfile {
     private final String login;
     private final String email;
     private final String password;
+    private int amount = 1;
 
     public UserProfile(String login, String email, String password) {
         this.login = login;
@@ -21,5 +22,13 @@ public class UserProfile {
 
     public String getEmail() {
         return email;
+    }
+
+    public void increment() {
+        amount++;
+    }
+
+    public int getAmount() {
+        return amount;
     }
 }
