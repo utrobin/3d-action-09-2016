@@ -1,7 +1,6 @@
 package ru.javajava.main;
 
-import com.sun.deploy.net.HttpResponse;
-import com.sun.deploy.net.MessageHeader;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountService;
 
-import java.io.BufferedInputStream;
-import java.net.URL;
 
 @RestController
 public class RegistrationController {
@@ -35,11 +32,13 @@ public class RegistrationController {
         if (StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password)
                 || StringUtils.isEmpty(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(1, "Bad parameters"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "bad parameters"));
         }
         final UserProfile existingUser = accountService.getUser(login);
         if (existingUser != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(2, "User already exists"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "User already exists"));
         }
 
         final UserProfile user = accountService.addUser(login, password, email);
@@ -56,17 +55,20 @@ public class RegistrationController {
 
         if(StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password) ) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(1, "Bad parameters"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "bad parameters"));
         }
         final UserProfile user = accountService.getUser(login);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "user not found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "user not found"));
         }
         if(user.getPassword().equals(password)) {
             user.increment();
             return ResponseEntity.ok(new SuccessResponse(user.getLogin(), user.getEmail(), user.getAmount()));
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(3, "Incorrect password"));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse(HttpStatus.FORBIDDEN.value(), "incorrect password"));
     }
 
 
