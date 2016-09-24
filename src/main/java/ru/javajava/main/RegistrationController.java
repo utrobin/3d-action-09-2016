@@ -22,27 +22,27 @@ public class RegistrationController {
 
 
     @RequestMapping(path = "/api/signup", method = RequestMethod.POST)
-    public ResponseEntity signUp(@RequestParam(name = "login") String login,
-                                 @RequestParam (name = "password") String password,
-                                 @RequestParam (name = "email") String email)
+    public ResponseEntity signup(@RequestBody RequestUser jsonString)
     {
-//        final String login = body.getLogin();
-//        final String password = body.getPassword();
-//        final String email = body.getEmail();
+        final String login = jsonString.getLogin();
+        final String password = jsonString.getPassword();
+        final String email = jsonString.getEmail();
+
         if (StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password)
                 || StringUtils.isEmpty(email)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "bad parameters"));
         }
+
         final UserProfile existingUser = accountService.getUser(login);
         if (existingUser != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "User already exists"));
+                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "user already exists"));
         }
 
-        final UserProfile user = accountService.addUser(login, password, email);
-        return ResponseEntity.ok(new SuccessResponse(login, email, user.getAmount()));
+        accountService.addUser(login, password, email);
+        return ResponseEntity.ok(new SuccessSignupResponse(login, email));
     }
 
 
@@ -50,22 +50,26 @@ public class RegistrationController {
 
 
     @RequestMapping(path = "/api/login", method = RequestMethod.POST)
-    public ResponseEntity signIn(@RequestParam(name = "login") String login,
-                                @RequestParam(name = "password") String password) {
+    public ResponseEntity login(@RequestBody RequestUser jsonString) {
+
+        final String login = jsonString.getLogin();
+        final String password = jsonString.getPassword();
 
         if(StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password) ) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "bad parameters"));
         }
+
         final UserProfile user = accountService.getUser(login);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "user not found"));
         }
+
         if(user.getPassword().equals(password)) {
             user.increment();
-            return ResponseEntity.ok(new SuccessResponse(user.getLogin(), user.getEmail(), user.getAmount()));
+            return ResponseEntity.ok(new SuccessLoginResponse(user.getLogin(), user.getEmail(), user.getAmount()));
         }
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ErrorResponse(HttpStatus.FORBIDDEN.value(), "incorrect password"));
@@ -75,14 +79,34 @@ public class RegistrationController {
 
 
 
+    private static final class SuccessSignupResponse {
+        private final String login;
+        private final String email;
 
-    private static final class SuccessResponse {
+
+        private SuccessSignupResponse(String login, String email) {
+            this.login = login;
+            this.email = email;
+        }
+
+        @SuppressWarnings("unused")
+        public String getLogin() {
+            return login;
+        }
+
+        @SuppressWarnings("unused")
+        public String getEmail() {
+            return email;
+        }
+    }
+
+    private static final class SuccessLoginResponse {
         private final String login;
         private final String email;
         private final int amount;
 
 
-        private SuccessResponse(String login, String email, int amount) {
+        private SuccessLoginResponse(String login, String email, int amount) {
             this.login = login;
             this.email = email;
             this.amount = amount;
@@ -114,14 +138,43 @@ public class RegistrationController {
             this.reason = reason;
         }
 
+        @SuppressWarnings("unused")
         public int getCode() {
             return code;
         }
 
+        @SuppressWarnings("unused")
         public String getReason() {
             return reason;
         }
     }
 
 
+    public static class RequestUser {
+        private String login;
+        private String password;
+        private String email;
+
+        public RequestUser () {
+
+        }
+
+        public RequestUser(String login, String password, String email) {
+            this.login = login;
+            this.password = password;
+            this.email = email;
+        }
+
+        public String getLogin() {
+            return login;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+    }
 }
