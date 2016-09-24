@@ -1,5 +1,7 @@
 package ru.javajava.main;
 
+import com.sun.deploy.net.HttpResponse;
+import com.sun.deploy.net.MessageHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +9,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountService;
+
+import java.io.BufferedInputStream;
+import java.net.URL;
 
 @RestController
 public class RegistrationController {
@@ -55,7 +60,7 @@ public class RegistrationController {
         }
         final UserProfile user = accountService.getUser(login);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(1, "User doesn't exist"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, "user not found"));
         }
         if(user.getPassword().equals(password)) {
             user.increment();
