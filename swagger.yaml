@@ -71,7 +71,7 @@ definitions:
         type: string
       email:
         type: string
-      amout:
+      amount:
         type: integer
         format: int32
         description: Amount of signing in for this user.
