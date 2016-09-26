@@ -31,13 +31,13 @@ public class RegistrationController {
         if (StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password)
                 || StringUtils.isEmpty(email)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "bad parameters"));
         }
 
         final UserProfile existingUser = accountService.getUser(login);
         if (existingUser != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "user already exists"));
         }
 
@@ -57,13 +57,13 @@ public class RegistrationController {
 
         if(StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password) ) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "bad parameters"));
         }
 
         final UserProfile user = accountService.getUser(login);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "user not found"));
         }
 
@@ -71,8 +71,8 @@ public class RegistrationController {
             user.increment();
             return ResponseEntity.ok(new SuccessLoginResponse(user.getLogin(), user.getEmail(), user.getAmount()));
         }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new ErrorResponse(HttpStatus.FORBIDDEN.value(), "incorrect password"));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "incorrect password"));
     }
 
 
