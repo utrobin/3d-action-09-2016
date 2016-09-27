@@ -33,7 +33,7 @@ public class UserProfile {
         return email;
     }
 
-    public void increment() {
+    public void incrementAmount() {
         amount++;
     }
 

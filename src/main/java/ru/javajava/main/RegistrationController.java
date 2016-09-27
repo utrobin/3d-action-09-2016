@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountService;
 
+import javax.servlet.http.HttpSession;
+
 
 @RestController
 public class RegistrationController {
@@ -22,7 +24,7 @@ public class RegistrationController {
 
 
     @RequestMapping(path = "/api/signup", method = RequestMethod.POST)
-    public ResponseEntity signup(@RequestBody RequestUser jsonString)
+    public ResponseEntity signup(@RequestBody RequestUser jsonString, HttpSession httpSession)
     {
         final String login = jsonString.getLogin();
         final String password = jsonString.getPassword();
@@ -35,13 +37,15 @@ public class RegistrationController {
                     .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "bad parameters"));
         }
 
-        final UserProfile existingUser = accountService.getUser(login);
+        final UserProfile existingUser = accountService.getUserByLogin(login);
         if (existingUser != null) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "user already exists"));
         }
 
-        accountService.addUser(login, password, email);
+        final UserProfile newUser = accountService.addUser(login, password, email);
+        final String sessionId = httpSession.getId();
+        accountService.addSession(sessionId, newUser);
         return ResponseEntity.ok(new SuccessSignupResponse(login, email));
     }
 
@@ -50,7 +54,7 @@ public class RegistrationController {
 
 
     @RequestMapping(path = "/api/login", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody RequestUser jsonString) {
+    public ResponseEntity login(@RequestBody RequestUser jsonString, HttpSession httpSession) {
 
         final String login = jsonString.getLogin();
         final String password = jsonString.getPassword();
@@ -61,28 +65,29 @@ public class RegistrationController {
                     .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "bad parameters"));
         }
 
-        final UserProfile user = accountService.getUser(login);
+        final UserProfile user = accountService.getUserByLogin(login);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "user not found"));
         }
 
+
         if(user.getPassword().equals(password)) {
-            user.increment();
-            return ResponseEntity.ok(new SuccessLoginResponse(user.getLogin(), user.getEmail(), user.getAmount()));
+            user.incrementAmount();
+            final String sessionId = httpSession.getId();
+            accountService.addSession(sessionId, user);
+            return ResponseEntity.ok(new SuccessLoginResponse(login, user.getEmail(), user.getAmount()));
         }
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "incorrect password"));
     }
 
 
 
-
-
     private static final class SuccessSignupResponse {
         private final String login;
         private final String email;
-
 
         private SuccessSignupResponse(String login, String email) {
             this.login = login;
@@ -104,7 +109,6 @@ public class RegistrationController {
         private final String login;
         private final String email;
         private final int amount;
-
 
         private SuccessLoginResponse(String login, String email, int amount) {
             this.login = login;
@@ -155,10 +159,11 @@ public class RegistrationController {
         private String password;
         private String email;
 
+        @SuppressWarnings("unused")
         public RequestUser () {
 
         }
-
+        @SuppressWarnings("unused")
         public RequestUser(String login, String password, String email) {
             this.login = login;
             this.password = password;
@@ -168,11 +173,9 @@ public class RegistrationController {
         public String getLogin() {
             return login;
         }
-
         public String getPassword() {
             return password;
         }
-
         public String getEmail() {
             return email;
         }
