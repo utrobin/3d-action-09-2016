@@ -5,11 +5,12 @@ import ru.javajava.model.UserProfile;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class AccountService {
-    private final Map<String, UserProfile> loginToProfile = new HashMap<>();
-    private final Map<String, UserProfile> sessionIdToProfile = new HashMap<>();
+    private final Map<String, UserProfile> loginToProfile = new ConcurrentHashMap<>();
+    private final Map<String, UserProfile> sessionIdToProfile = new ConcurrentHashMap<>();
 
     public UserProfile addUser(String login, String password, String email) {
         final UserProfile userProfile = new UserProfile(login, email, password);
