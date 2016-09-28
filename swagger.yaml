@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
-  title: TP vs Zombies
-  description: I wish swagger dies.
+  title: Outlive
+  description: Zombie survival
   version: "1.0.0"
 host: javajava.ru
 schemes:
@@ -23,6 +23,8 @@ paths:
       responses:
         200:
           description: OK
+          schema:
+            $ref: '#/definitions/SignupResponse'
         default:
           description: FAIL
           schema:
@@ -41,7 +43,7 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/UserModel'
+            $ref: '#/definitions/LoginResponse'
         default:
           description: FAIL
           schema:
@@ -64,7 +66,14 @@ definitions:
         type: string
       password:
         type: string
-  UserModel:
+  SignupResponse:
+    type: object
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+  LoginResponse:
     type: object
     properties:
       name:
