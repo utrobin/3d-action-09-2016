@@ -26,16 +26,20 @@ public class RegistrationController {
     @RequestMapping(path = "/api/signup", method = RequestMethod.POST)
     public ResponseEntity signup(@RequestBody RequestUser jsonString, HttpSession httpSession)
     {
-        final String login = jsonString.getLogin();
+        String login = jsonString.getLogin();
         final String password = jsonString.getPassword();
         final String email = jsonString.getEmail();
 
-        if (StringUtils.isEmpty(login)
-                || StringUtils.isEmpty(password)
+        if (StringUtils.isEmpty(password)
                 || StringUtils.isEmpty(email)) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "bad parameters"));
         }
+
+        if (StringUtils.isEmpty(login)) {
+            login = email;
+        }
+
 
         final UserProfile existingUser = accountService.getUserByLogin(login);
         if (existingUser != null) {
