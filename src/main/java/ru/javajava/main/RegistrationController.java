@@ -47,9 +47,7 @@ public class RegistrationController {
                     .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "user already exists"));
         }
 
-        final UserProfile newUser = accountService.addUser(login, password, email);
-        final String sessionId = httpSession.getId();
-        accountService.addSession(sessionId, newUser);
+        accountService.addUser(login, password, email);
         return ResponseEntity.ok(new SuccessSignupResponse(login, email));
     }
 
@@ -78,8 +76,6 @@ public class RegistrationController {
 
         if(user.getPassword().equals(password)) {
             user.incrementAmount();
-            final String sessionId = httpSession.getId();
-            accountService.addSession(sessionId, user);
             return ResponseEntity.ok(new SuccessLoginResponse(login, user.getEmail(), user.getAmount()));
         }
 

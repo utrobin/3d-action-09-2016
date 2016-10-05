@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class AccountService {
     private final Map<String, UserProfile> loginToProfile = new ConcurrentHashMap<>();
-    private final Map<String, UserProfile> sessionIdToProfile = new ConcurrentHashMap<>();
 
     public UserProfile addUser(String login, String password, String email) {
         final UserProfile userProfile = new UserProfile(login, email, password);
@@ -21,17 +20,4 @@ public class AccountService {
     public UserProfile getUserByLogin(String login) {
         return loginToProfile.get(login);
     }
-
-    public UserProfile getUserBySessionId (String sessionId) {
-        return sessionIdToProfile.get(sessionId);
-    }
-
-    public void addSession(String sessionId, UserProfile userProfile) {
-        sessionIdToProfile.put(sessionId, userProfile);
-    }
-
-    public void deleteSession(String sessionId) {
-        sessionIdToProfile.remove(sessionId);
-    }
-
 }
