@@ -1,6 +1,11 @@
 <component name="InspectionProjectProfileManager">
-  <profile version="1.0">
-    <option name="myName" value="profiles_settings" />
+  <settings>
+    <option name="PROJECT_PROFILE" value="profiles_settings" />
+    <option name="USE_PROJECT_PROFILE" value="true" />
+    <version value="1.0" />
+  </settings>
+
+  <profile>
     <inspection_tool class="AbstractClassNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_minLength" value="4" />
     </inspection_tool>
