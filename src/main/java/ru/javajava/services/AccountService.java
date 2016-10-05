@@ -8,4 +8,5 @@ import ru.javajava.model.UserProfile;
 public interface AccountService {
     public UserProfile addUser(String login, String password, String email);
     public UserProfile getUserByLogin(String login);
+    public UserProfile getUserById(Long Id);
 }
