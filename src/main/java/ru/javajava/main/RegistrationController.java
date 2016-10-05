@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.javajava.model.UserProfile;
-import ru.javajava.services.AccountService;
+import ru.javajava.services.AccountServiceImpl;
 
 import javax.servlet.http.HttpSession;
 
@@ -15,10 +15,10 @@ import javax.servlet.http.HttpSession;
 @RestController
 public class RegistrationController {
 
-    private final AccountService accountService;
+    private final AccountServiceImpl accountService;
 
     @Autowired
-    public RegistrationController(AccountService accountService) {
+    public RegistrationController(AccountServiceImpl accountService) {
         this.accountService = accountService;
     }
 
