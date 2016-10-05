@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import ru.javajava.exceptions.CustomException;
 import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountServiceImpl;
 
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 
 @RestController
+@SuppressWarnings("unused")
 public class RegistrationController {
 
     private final AccountServiceImpl accountService;
@@ -24,7 +26,7 @@ public class RegistrationController {
 
 
     @RequestMapping(path = "/api/signup", method = RequestMethod.POST)
-    public ResponseEntity signup(@RequestBody RequestUser jsonString, HttpSession httpSession)
+    public ResponseEntity signup(@RequestBody RequestUser jsonString, HttpSession httpSession) throws CustomException
     {
         String login = jsonString.getLogin();
         final String password = jsonString.getPassword();
@@ -32,19 +34,16 @@ public class RegistrationController {
 
         if (StringUtils.isEmpty(password)
                 || StringUtils.isEmpty(email)) {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "bad parameters"));
+            throw new CustomException(HttpStatus.BAD_REQUEST, "bad parameters");
         }
 
         if (StringUtils.isEmpty(login)) {
             login = email;
         }
 
-
         final UserProfile existingUser = accountService.getUserByLogin(login);
         if (existingUser != null) {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "user already exists"));
+            throw new CustomException(HttpStatus.CONFLICT, "user already exists");
         }
 
         final UserProfile newUser = accountService.addUser(login, password, email);
@@ -58,23 +57,20 @@ public class RegistrationController {
 
 
     @RequestMapping(path = "/api/login", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody RequestUser jsonString, HttpSession httpSession) {
+    public ResponseEntity login(@RequestBody RequestUser jsonString, HttpSession httpSession) throws CustomException {
 
         final String login = jsonString.getLogin();
         final String password = jsonString.getPassword();
 
         if(StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password) ) {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "bad parameters"));
+            throw new CustomException(HttpStatus.BAD_REQUEST, "bad parameters");
         }
 
         final UserProfile user = accountService.getUserByLogin(login);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "user not found"));
+            throw new CustomException(HttpStatus.NOT_FOUND, "user not found");
         }
-
 
         if(user.getPassword().equals(password)) {
             user.incrementAmount();
@@ -83,8 +79,7 @@ public class RegistrationController {
             return ResponseEntity.ok(new SuccessLoginResponse(login, user.getEmail(), user.getAmount()));
         }
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), "incorrect password"));
+        throw new CustomException(HttpStatus.UNAUTHORIZED, "incorrect password");
     }
 
 
@@ -102,7 +97,6 @@ public class RegistrationController {
         public String getLogin() {
             return login;
         }
-
         @SuppressWarnings("unused")
         public String getEmail() {
             return email;
@@ -134,26 +128,6 @@ public class RegistrationController {
         }
     }
 
-
-    private static final class ErrorResponse {
-        private final int code;
-        private final String reason;
-
-        private ErrorResponse(int code, String reason) {
-            this.code = code;
-            this.reason = reason;
-        }
-
-        @SuppressWarnings("unused")
-        public int getCode() {
-            return code;
-        }
-
-        @SuppressWarnings("unused")
-        public String getReason() {
-            return reason;
-        }
-    }
 
 
     public static class RequestUser {
