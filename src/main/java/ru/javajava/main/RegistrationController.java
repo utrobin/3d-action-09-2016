@@ -49,7 +49,7 @@ public class RegistrationController {
 
         final UserProfile newUser = accountService.addUser(login, password, email);
         final String sessionId = httpSession.getId();
-        httpSession.setAttribute(sessionId, newUser);
+        httpSession.setAttribute(sessionId, newUser.getId());
         return ResponseEntity.ok(new SuccessSignupResponse(login, email));
     }
 
@@ -79,7 +79,7 @@ public class RegistrationController {
         if(user.getPassword().equals(password)) {
             user.incrementAmount();
             final String sessionId = httpSession.getId();
-            httpSession.setAttribute(sessionId, user);
+            httpSession.setAttribute(sessionId, user.getId());
             return ResponseEntity.ok(new SuccessLoginResponse(login, user.getEmail(), user.getAmount()));
         }
 
