@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
-import ru.javajava.exceptions.CustomException;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountServiceImpl;
 
@@ -25,21 +27,22 @@ public class RegistrationController {
 
 
     @RequestMapping(path = "/api/signup", method = RequestMethod.POST)
-    public ResponseEntity signup(@RequestBody RequestUser jsonString, HttpSession httpSession) throws CustomException
-    {
+    public ResponseEntity signup(@RequestBody RequestUser jsonString, HttpSession httpSession) {
         final String login = jsonString.getLogin();
         final String password = jsonString.getPassword();
         final String email = jsonString.getEmail();
 
         if (StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password)) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "bad parameters");
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST, "bad parameters"));
         }
 
 
         final UserProfile existingUser = accountService.getUserByLogin(login);
         if (existingUser != null) {
-            throw new CustomException(HttpStatus.CONFLICT, "user already exists");
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ErrorResponse(HttpStatus.CONFLICT, "user already exists"));
         }
 
         final UserProfile newUser = accountService.addUser(login, password, email);
@@ -49,44 +52,41 @@ public class RegistrationController {
     }
 
 
-
-
-
-
     @RequestMapping(path = "/api/login", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody RequestUser jsonString, HttpSession httpSession) throws CustomException {
+    public ResponseEntity login(@RequestBody RequestUser jsonString, HttpSession httpSession) {
 
         final String login = jsonString.getLogin();
         final String password = jsonString.getPassword();
 
-        if(StringUtils.isEmpty(login)
-                || StringUtils.isEmpty(password) ) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "bad parameters");
+        if (StringUtils.isEmpty(login)
+                || StringUtils.isEmpty(password)) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST, "bad parameters"));
         }
 
         final UserProfile user = accountService.getUserByLogin(login);
         if (user == null) {
-            throw new CustomException(HttpStatus.NOT_FOUND, "user not found");
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ErrorResponse(HttpStatus.NOT_FOUND, "user not found"));
         }
 
-        if(user.getPassword().equals(password)) {
+        if (user.getPassword().equals(password)) {
             user.incrementAmount();
             final String sessionId = httpSession.getId();
             httpSession.setAttribute(sessionId, user.getId());
             return ResponseEntity.ok(new SuccessLoginResponse(login, user.getEmail(), user.getAmount()));
         }
 
-        throw new CustomException(HttpStatus.UNAUTHORIZED, "incorrect password");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ErrorResponse(HttpStatus.UNAUTHORIZED, "incorrect password"));
     }
 
     @RequestMapping(path = "/api/logout", method = RequestMethod.GET)
-    public HttpStatus logout(HttpSession httpSession) throws CustomException
-    {
+    public HttpStatus logout(HttpSession httpSession) {
         final String sessionId = httpSession.getId();
         httpSession.removeAttribute(sessionId);
         return HttpStatus.OK;
     }
-
 
 
     private static final class SuccessSignupResponse {
@@ -102,6 +102,7 @@ public class RegistrationController {
         public String getLogin() {
             return login;
         }
+
         @SuppressWarnings("unused")
         public String getEmail() {
             return email;
@@ -123,42 +124,65 @@ public class RegistrationController {
         public String getLogin() {
             return login;
         }
+
         @SuppressWarnings("unused")
         public String getEmail() {
             return email;
         }
+
         @SuppressWarnings("unused")
         public int getAmount() {
             return amount;
         }
     }
 
+    public static final class ErrorResponse {
+        private final HttpStatus code;
+        private final String reason;
 
-
-    public static class RequestUser {
-        private String login;
-        private String password;
-        private String email;
+        public ErrorResponse(HttpStatus code, String reason) {
+            this.code = code;
+            this.reason = reason;
+        }
 
         @SuppressWarnings("unused")
-        public RequestUser () {
-
+        public int getCode() {
+            return code.value();
         }
+
         @SuppressWarnings("unused")
-        public RequestUser(String login, String password, String email) {
-            this.login = login;
-            this.password = password;
-            this.email = email;
-        }
-
-        public String getLogin() {
-            return login;
-        }
-        public String getPassword() {
-            return password;
-        }
-        public String getEmail() {
-            return email;
+        public String getReason() {
+            return reason;
         }
     }
+
+public static class RequestUser {
+    private String login;
+    private String password;
+    private String email;
+
+    @SuppressWarnings("unused")
+    public RequestUser() {
+
+    }
+
+    @SuppressWarnings("unused")
+    public RequestUser(String login, String password, String email) {
+        this.login = login;
+        this.password = password;
+        this.email = email;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+}
 }
