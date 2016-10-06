@@ -48,6 +48,15 @@ paths:
           description: FAIL
           schema:
             $ref: '#/definitions/Error'
+            
+  /logout:
+    post:
+      tags:
+        - Logout
+      responses:
+        200:
+          description: OK
+        
 
 definitions:
   SignupForm:
