@@ -14,7 +14,6 @@ import javax.servlet.http.HttpSession;
 
 
 @RestController
-@SuppressWarnings("unused")
 public class RegistrationController {
 
     private final AccountServiceImpl accountService;
