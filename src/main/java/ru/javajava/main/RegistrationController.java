@@ -28,18 +28,15 @@ public class RegistrationController {
     @RequestMapping(path = "/api/signup", method = RequestMethod.POST)
     public ResponseEntity signup(@RequestBody RequestUser jsonString, HttpSession httpSession) throws CustomException
     {
-        String login = jsonString.getLogin();
+        final String login = jsonString.getLogin();
         final String password = jsonString.getPassword();
         final String email = jsonString.getEmail();
 
-        if (StringUtils.isEmpty(password)
-                || StringUtils.isEmpty(email)) {
+        if (StringUtils.isEmpty(login)
+                || StringUtils.isEmpty(password)) {
             throw new CustomException(HttpStatus.BAD_REQUEST, "bad parameters");
         }
 
-        if (StringUtils.isEmpty(login)) {
-            login = email;
-        }
 
         final UserProfile existingUser = accountService.getUserByLogin(login);
         if (existingUser != null) {
