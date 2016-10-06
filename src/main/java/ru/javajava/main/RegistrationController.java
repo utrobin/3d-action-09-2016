@@ -53,6 +53,7 @@ public class RegistrationController {
 
 
 
+
     @RequestMapping(path = "/api/login", method = RequestMethod.POST)
     public ResponseEntity login(@RequestBody RequestUser jsonString, HttpSession httpSession) throws CustomException {
 
@@ -77,6 +78,14 @@ public class RegistrationController {
         }
 
         throw new CustomException(HttpStatus.UNAUTHORIZED, "incorrect password");
+    }
+
+    @RequestMapping(path = "/api/logout", method = RequestMethod.GET)
+    public HttpStatus logout(HttpSession httpSession) throws CustomException
+    {
+        final String sessionId = httpSession.getId();
+        httpSession.removeAttribute(sessionId);
+        return HttpStatus.OK;
     }
 
 
