@@ -81,7 +81,7 @@ public class RegistrationController {
                 .body(new ErrorResponse(HttpStatus.UNAUTHORIZED, "incorrect password"));
     }
 
-    @RequestMapping(path = "/api/logout", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/logout", method = RequestMethod.POST)
     public HttpStatus logout(HttpSession httpSession) {
         final String sessionId = httpSession.getId();
         httpSession.removeAttribute(sessionId);
