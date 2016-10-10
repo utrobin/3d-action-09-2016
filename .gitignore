@@ -2,7 +2,6 @@
 /out/
 /target/
 
-!/.idea/*
 /.idea/*
 !/.idea/inspectionProfiles
 
