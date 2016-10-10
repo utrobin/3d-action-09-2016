@@ -26,7 +26,7 @@ import java.net.URI;
  * Created by ivan on 05.10.16.
  */
 
-public class test {
+public class Test {
 
     @Before
     public void setUp() throws Exception {
