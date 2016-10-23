@@ -3,7 +3,6 @@ package ru.javajava.main;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -12,45 +11,45 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import ru.javajava.model.UserProfile;
-import ru.javajava.services.AccountServiceImpl;
+import ru.javajava.services.AccountService;
 
 import javax.servlet.http.HttpSession;
 
 
 @RestController
 public class RegistrationController {
-
-    private final AccountServiceImpl accountService;
+    private final AccountService accountService;
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationController.class.getName());
 
-    @Autowired
-    public RegistrationController(AccountServiceImpl accountService) {
+    public RegistrationController(AccountService accountService) {
         this.accountService = accountService;
     }
 
 
     @RequestMapping(path = "/api/signup", method = RequestMethod.POST)
-    public ResponseEntity signup(@RequestBody RequestUser jsonString, HttpSession httpSession) {
-        final String login = jsonString.getLogin();
-        final String password = jsonString.getPassword();
-        final String email = jsonString.getEmail();
+    public ResponseEntity signup(@RequestBody RequestUser request, HttpSession httpSession) {
+        final String login = request.getLogin();
+        final String password = request.getPassword();
+        final String email = request.getEmail();
 
         if (StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password)) {
             LOGGER.info("Registration failed (bad parametres)");
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST, "bad parameters"));
+            return ResponseEntity.ok(new ErrorResponse(HttpStatus.BAD_REQUEST, "bad parameters"));
         }
 
 
         final UserProfile existingUser = accountService.getUserByLogin(login);
         if (existingUser != null) {
             LOGGER.info("Registration failed because user {} already exists", login);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ErrorResponse(HttpStatus.CONFLICT, "user already exists"));
+            return ResponseEntity.ok(new ErrorResponse(HttpStatus.CONFLICT, "This login is already taken"));
         }
 
         final UserProfile newUser = accountService.addUser(login, password, email);
+        if (newUser == null) {
+            return ResponseEntity.ok(new ErrorResponse(HttpStatus.CONFLICT, "This email is already taken"));
+        }
+
         final String sessionId = httpSession.getId();
         httpSession.setAttribute(sessionId, newUser.getId());
         LOGGER.info("Creating new user \"{}\" is successful", login);
@@ -59,36 +58,33 @@ public class RegistrationController {
 
 
     @RequestMapping(path = "/api/login", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody RequestUser jsonString, HttpSession httpSession) {
+    public ResponseEntity login(@RequestBody RequestUser request, HttpSession httpSession) {
 
-        final String login = jsonString.getLogin();
-        final String password = jsonString.getPassword();
+        final String login = request.getLogin();
+        final String password = request.getPassword();
 
         if (StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password)) {
             LOGGER.info("Authorization failed (bad parametres)");
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ErrorResponse(HttpStatus.BAD_REQUEST, "bad parameters"));
+            return ResponseEntity.ok(new ErrorResponse(HttpStatus.BAD_REQUEST, "bad parameters"));
         }
 
         final UserProfile user = accountService.getUserByLogin(login);
         if (user == null) {
             LOGGER.info("Authorization failed because user {} does not exist", login);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new ErrorResponse(HttpStatus.NOT_FOUND, "user not found"));
+            return ResponseEntity.ok(new ErrorResponse(HttpStatus.NOT_FOUND, "user not found"));
         }
 
         if (user.getPassword().equals(password)) {
-            user.incrementAmount();
+            accountService.incrementVisits(user.getId());
             final String sessionId = httpSession.getId();
             httpSession.setAttribute(sessionId, user.getId());
-            LOGGER.info("Authorization OK! User: {}", login);
-            return ResponseEntity.ok(new SuccessLoginResponse(login, user.getEmail(), user.getAmount()));
+            LOGGER.info("Authorization OK for user {}", login);
+            return ResponseEntity.ok(new SuccessLoginResponse(login, user.getEmail(), user.getVisits()));
         }
 
         LOGGER.info("Authorization failed - incorrect password for user {}", login);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ErrorResponse(HttpStatus.UNAUTHORIZED, "incorrect password"));
+        return ResponseEntity.ok(new ErrorResponse(HttpStatus.UNAUTHORIZED, "incorrect password"));
     }
 
     @RequestMapping(path = "/api/logout", method = RequestMethod.POST)
@@ -167,33 +163,33 @@ public class RegistrationController {
         }
     }
 
-public static class RequestUser {
-    private String login;
-    private String password;
-    private String email;
+    public static class RequestUser {
+        private String login;
+        private String password;
+        private String email;
 
-    @SuppressWarnings("unused")
-    public RequestUser() {
+        @SuppressWarnings("unused")
+        public RequestUser() {
 
+        }
+
+        @SuppressWarnings("unused")
+        public RequestUser(String login, String password, String email) {
+            this.login = login;
+            this.password = password;
+            this.email = email;
+        }
+
+        public String getLogin() {
+            return login;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public String getEmail() {
+            return email;
+        }
     }
-
-    @SuppressWarnings("unused")
-    public RequestUser(String login, String password, String email) {
-        this.login = login;
-        this.password = password;
-        this.email = email;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-}
 }

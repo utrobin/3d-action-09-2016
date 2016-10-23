@@ -7,18 +7,16 @@ public class UserProfile {
     private final String login;
     private final String email;
     private final String password;
-    private int amount = 1;
+    private int visits = 1;
+    private int rating;
 
-    private static final AtomicLong ID_GENETATOR = new AtomicLong(0);
-    private final long id;
+    private long id;
 
 
-
-    public UserProfile(String login, String email, String password) {
+    public UserProfile(String login, String password, String email) {
         this.login = login;
-        this.email = email;
         this.password = password;
-        this.id = ID_GENETATOR.getAndIncrement();
+        this.email = email;
     }
 
     public String getLogin() {
@@ -33,15 +31,27 @@ public class UserProfile {
         return email;
     }
 
-    public void incrementAmount() {
-        amount++;
+    public int getVisits() {
+        return visits;
     }
 
-    public int getAmount() {
-        return amount;
+    public void setVisits(int visits) {
+        this.visits = visits;
     }
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }

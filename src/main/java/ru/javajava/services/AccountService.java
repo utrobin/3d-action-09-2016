@@ -8,5 +8,8 @@ import ru.javajava.model.UserProfile;
 public interface AccountService {
     UserProfile addUser(String login, String password, String email);
     UserProfile getUserByLogin(String login);
-    UserProfile getUserById(Long id);
+    UserProfile getUserById(long id);
+    int incrementVisits(long userId);
+    int setRating(long userId, int rating);
+    int incrementRating(long userId);
 }
