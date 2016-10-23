@@ -13,6 +13,7 @@ import ru.javajava.main.RegistrationController;
 public class ExceptionHandlerAdvice {
     @ExceptionHandler(Exception.class)
     public ResponseEntity handle(Exception e) {
+        e.printStackTrace();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new RegistrationController.ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
     }

@@ -1,6 +1,8 @@
 package ru.javajava.main;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpSession;
 public class RegistrationController {
 
     private final AccountServiceImpl accountService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationController.class.getName());
 
     @Autowired
     public RegistrationController(AccountServiceImpl accountService) {
@@ -34,6 +37,7 @@ public class RegistrationController {
 
         if (StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password)) {
+            LOGGER.info("Registration failed (bad parametres)");
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ErrorResponse(HttpStatus.BAD_REQUEST, "bad parameters"));
         }
@@ -41,6 +45,7 @@ public class RegistrationController {
 
         final UserProfile existingUser = accountService.getUserByLogin(login);
         if (existingUser != null) {
+            LOGGER.info("Registration failed because user {} already exists", login);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ErrorResponse(HttpStatus.CONFLICT, "user already exists"));
         }
@@ -48,6 +53,7 @@ public class RegistrationController {
         final UserProfile newUser = accountService.addUser(login, password, email);
         final String sessionId = httpSession.getId();
         httpSession.setAttribute(sessionId, newUser.getId());
+        LOGGER.info("Creating new user \"{}\" is successful", login);
         return ResponseEntity.ok(new SuccessSignupResponse(login, email));
     }
 
@@ -60,12 +66,14 @@ public class RegistrationController {
 
         if (StringUtils.isEmpty(login)
                 || StringUtils.isEmpty(password)) {
+            LOGGER.info("Authorization failed (bad parametres)");
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ErrorResponse(HttpStatus.BAD_REQUEST, "bad parameters"));
         }
 
         final UserProfile user = accountService.getUserByLogin(login);
         if (user == null) {
+            LOGGER.info("Authorization failed because user {} does not exist", login);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new ErrorResponse(HttpStatus.NOT_FOUND, "user not found"));
         }
@@ -74,9 +82,11 @@ public class RegistrationController {
             user.incrementAmount();
             final String sessionId = httpSession.getId();
             httpSession.setAttribute(sessionId, user.getId());
+            LOGGER.info("Authorization OK! User: {}", login);
             return ResponseEntity.ok(new SuccessLoginResponse(login, user.getEmail(), user.getAmount()));
         }
 
+        LOGGER.info("Authorization failed - incorrect password for user {}", login);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ErrorResponse(HttpStatus.UNAUTHORIZED, "incorrect password"));
     }
@@ -85,6 +95,7 @@ public class RegistrationController {
     public HttpStatus logout(HttpSession httpSession) {
         final String sessionId = httpSession.getId();
         httpSession.removeAttribute(sessionId);
+        LOGGER.info("Log out OK");
         return HttpStatus.OK;
     }
 
