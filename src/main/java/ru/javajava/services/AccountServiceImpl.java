@@ -7,6 +7,10 @@ import org.springframework.stereotype.Service;
 import ru.javajava.DAO.UserDAO;
 import ru.javajava.model.UserProfile;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by Администратор on 23.10.2016.
  */
@@ -54,5 +58,13 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void incrementRating(long userId) {
         userDAO.incrementRating(userId);
+    }
+
+
+    @Override
+    public List<UserProfile> getBestUsers() {
+        final List<UserProfile> users = userDAO.getAll();
+        Collections.sort(users, (a, b) -> b.getRating() - a.getRating());
+        return users;
     }
 }

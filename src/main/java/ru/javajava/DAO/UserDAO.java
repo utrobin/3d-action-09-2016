@@ -4,6 +4,8 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import ru.javajava.model.UserProfile;
 
+import java.util.List;
+
 /**
  * Created by ivan on 24.10.16.
  */
@@ -14,4 +16,5 @@ public interface UserDAO {
     void incrementVisits(long userId) throws EmptyResultDataAccessException;
     void setRating(long userId, int rating) throws EmptyResultDataAccessException;
     void incrementRating(long userId) throws EmptyResultDataAccessException;
+    List<UserProfile> getAll() throws EmptyResultDataAccessException;
 }

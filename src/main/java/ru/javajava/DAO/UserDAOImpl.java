@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -82,6 +83,12 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+
+    @Override
+    public List<UserProfile> getAll() throws EmptyResultDataAccessException {
+        final String query = "SELECT * FROM user;";
+        return template.query(query, userMapper);
+    }
 
     private static class UserPstCreator implements PreparedStatementCreator {
         private final UserProfile user;
