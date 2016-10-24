@@ -7,12 +7,11 @@ import org.springframework.stereotype.Service;
 import ru.javajava.DAO.UserDAO;
 import ru.javajava.model.UserProfile;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by Администратор on 23.10.2016.
+ * Created by ivan on 23.10.2016.
  */
 @Service
 public class AccountServiceImpl implements AccountService {

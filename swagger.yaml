@@ -56,6 +56,14 @@ paths:
       responses:
         200:
           description: OK
+
+  /best:
+      get:
+        tags:
+          - Best users
+        responses:
+          200:
+            description: array of best users
         
 
 definitions:
