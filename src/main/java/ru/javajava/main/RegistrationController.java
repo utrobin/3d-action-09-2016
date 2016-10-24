@@ -46,10 +46,6 @@ public class RegistrationController {
         }
 
         final UserProfile newUser = accountService.addUser(login, password, email);
-        if (newUser == null) {
-            return ResponseEntity.ok(new ErrorResponse(HttpStatus.CONFLICT, "This email is already taken"));
-        }
-
         final String sessionId = httpSession.getId();
         httpSession.setAttribute(sessionId, newUser.getId());
         LOGGER.info("Creating new user \"{}\" is successful", login);
@@ -77,6 +73,7 @@ public class RegistrationController {
 
         if (user.getPassword().equals(password)) {
             accountService.incrementVisits(user.getId());
+            user.incrementVisits();
             final String sessionId = httpSession.getId();
             httpSession.setAttribute(sessionId, user.getId());
             LOGGER.info("Authorization OK for user {}", login);

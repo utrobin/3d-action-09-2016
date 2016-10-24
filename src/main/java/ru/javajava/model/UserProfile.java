@@ -1,13 +1,11 @@
 package ru.javajava.model;
 
 
-import java.util.concurrent.atomic.AtomicLong;
-
 public class UserProfile {
     private final String login;
     private final String email;
     private final String password;
-    private int visits = 1;
+    private int visits;
     private int rating;
 
     private long id;
@@ -37,6 +35,10 @@ public class UserProfile {
 
     public void setVisits(int visits) {
         this.visits = visits;
+    }
+
+    public void incrementVisits() {
+        visits++;
     }
 
     public long getId() {
