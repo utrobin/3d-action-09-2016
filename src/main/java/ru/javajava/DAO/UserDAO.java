@@ -16,5 +16,5 @@ public interface UserDAO {
     void incrementVisits(long userId) throws EmptyResultDataAccessException;
     void setRating(long userId, int rating) throws EmptyResultDataAccessException;
     void incrementRating(long userId) throws EmptyResultDataAccessException;
-    List<UserProfile> getAll() throws EmptyResultDataAccessException;
+    List<UserProfile> getBestUsers(int page, int limit) throws EmptyResultDataAccessException;
 }

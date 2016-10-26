@@ -61,9 +61,8 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public List<UserProfile> getBestUsers() {
-        final List<UserProfile> users = userDAO.getAll();
-        Collections.sort(users, (a, b) -> b.getRating() - a.getRating());
-        return users;
+    public List<UserProfile> getBestUsers(int page) {
+        final int limit = 10;
+        return userDAO.getBestUsers(page, limit);
     }
 }

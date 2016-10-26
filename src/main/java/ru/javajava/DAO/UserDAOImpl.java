@@ -84,10 +84,12 @@ public class UserDAOImpl implements UserDAO {
     }
 
 
+
     @Override
-    public List<UserProfile> getAll() throws EmptyResultDataAccessException {
-        final String query = "SELECT * FROM user;";
-        return template.query(query, userMapper);
+    public List<UserProfile> getBestUsers(int page, int limit) throws EmptyResultDataAccessException {
+        final int offset = limit * (page - 1);
+        final String query = "SELECT * FROM user ORDER BY rating DESC LIMIT ? OFFSET ?;";
+        return template.query(query, userMapper, limit, offset);
     }
 
     private static class UserPstCreator implements PreparedStatementCreator {

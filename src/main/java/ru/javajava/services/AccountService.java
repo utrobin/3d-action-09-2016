@@ -11,7 +11,7 @@ public interface AccountService {
     UserProfile addUser(String login, String password, String email);
     UserProfile getUserByLogin(String login);
     UserProfile getUserById(long id);
-    List<UserProfile> getBestUsers();
+    List<UserProfile> getBestUsers(int page);
     void incrementVisits(long userId);
     void setRating(long userId, int rating);
     void incrementRating(long userId);
