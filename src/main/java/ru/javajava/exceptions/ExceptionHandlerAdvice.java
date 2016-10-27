@@ -15,14 +15,12 @@ public class ExceptionHandlerAdvice {
 
     @ExceptionHandler(DuplicateKeyException.class)
     public ResponseEntity handle(DuplicateKeyException e) {
-        e.printStackTrace();
         return ResponseEntity.ok(new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR, "Already exists"));
     }
 
     @ExceptionHandler(EmptyResultDataAccessException.class)
     public ResponseEntity handle(EmptyResultDataAccessException e) {
-        e.printStackTrace();
         return ResponseEntity.ok(new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR, "Not found"));
     }
