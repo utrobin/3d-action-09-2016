@@ -36,7 +36,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void initTable() {
-        final String query = "CREATE TABLE IF NOT EXIST (" +
+        final String query = "CREATE TABLE IF NOT EXISTS user (" +
                 "id BIGINT NOT NULL auto_increment PRIMARY KEY," +
                 "login VARCHAR(30) NOT NULL UNIQUE," +
                 "password VARCHAR(30) NOT NULL," +
@@ -129,8 +129,7 @@ public class UserDAOImpl implements UserDAO {
         final int visits = rs.getInt("visits");
         final int rating = rs.getInt("rating");
         final long id = rs.getLong("id");
-        final UserProfile result =  new UserProfile(login, password, email);
-        result.setVisits(visits);
+        final UserProfile result =  new UserProfile(login, password, email, visits);
         result.setRating(rating);
         result.setId(id);
         return result;

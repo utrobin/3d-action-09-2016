@@ -1,20 +1,29 @@
 package ru.javajava.model;
 
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class UserProfile {
     private final String login;
     private final String email;
     private final String password;
     private int visits;
     private int rating;
-
     private long id;
+
+    private final AtomicInteger visitsGenerator;
 
 
     public UserProfile(String login, String password, String email) {
+        this(login, password, email, 1);
+    }
+
+    public UserProfile(String login, String password, String email, int visits) {
         this.login = login;
         this.password = password;
         this.email = email;
+        this.visits = visits;
+        visitsGenerator = new AtomicInteger(visits + 1);
     }
 
     public String getLogin() {
@@ -38,7 +47,7 @@ public class UserProfile {
     }
 
     public void incrementVisits() {
-        visits++;
+        visits = visitsGenerator.getAndIncrement();
     }
 
     public long getId() {
