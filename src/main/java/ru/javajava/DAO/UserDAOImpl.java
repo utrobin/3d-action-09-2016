@@ -30,8 +30,21 @@ public class UserDAOImpl implements UserDAO {
     @SuppressWarnings("unused")
     public UserDAOImpl(JdbcTemplate template) {
         this.template = template;
+        initTable();
     }
 
+
+    @Override
+    public void initTable() {
+        final String query = "CREATE TABLE IF NOT EXIST (" +
+                "id BIGINT NOT NULL auto_increment PRIMARY KEY," +
+                "login VARCHAR(30) NOT NULL UNIQUE," +
+                "password VARCHAR(30) NOT NULL," +
+                "email VARCHAR(30) NOT NULL UNIQUE," +
+                "rating INT NOT NULL DEFAULT 0," +
+                "visits INT NOT NULL DEFAULT 1) DEFAULT CHARSET utf8 DEFAULT COLLATE utf8_general_ci;";
+        template.execute(query);
+    }
 
     @Override
     public UserProfile addUser(String login, String password, String email) throws DuplicateKeyException {

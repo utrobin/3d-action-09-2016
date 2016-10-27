@@ -10,6 +10,7 @@ import java.util.List;
  * Created by ivan on 24.10.16.
  */
 public interface UserDAO {
+    void initTable();
     UserProfile addUser(String login, String password, String email) throws DuplicateKeyException;
     UserProfile getUserByLogin(String login) throws EmptyResultDataAccessException;
     UserProfile getUserById(long id) throws EmptyResultDataAccessException;
