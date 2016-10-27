@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import ru.javajava.DAO.UserDAO;
 import ru.javajava.model.UserProfile;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
