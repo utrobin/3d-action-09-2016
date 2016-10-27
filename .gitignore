@@ -4,6 +4,8 @@
 
 .idea/*
 
+/src/main/resources/application.properties
+
 ### Java ###
 *.class
 
