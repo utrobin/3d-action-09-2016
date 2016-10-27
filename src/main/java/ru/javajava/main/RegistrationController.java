@@ -3,6 +3,7 @@ package ru.javajava.main;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import ru.javajava.exceptions.AlreadyExistsException;
 import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountService;
 
@@ -27,7 +29,8 @@ public class RegistrationController {
 
 
     @RequestMapping(path = "/api/signup", method = RequestMethod.POST)
-    public ResponseEntity signup(@RequestBody RequestUser request, HttpSession httpSession) {
+    public ResponseEntity signup(@RequestBody RequestUser request, HttpSession httpSession)
+            throws AlreadyExistsException {
         final String login = request.getLogin();
         final String password = request.getPassword();
         final String email = request.getEmail();
@@ -45,7 +48,14 @@ public class RegistrationController {
             return ResponseEntity.ok(new ErrorResponse(HttpStatus.CONFLICT, "This login is already taken"));
         }
 
-        final UserProfile newUser = accountService.addUser(login, password, email);
+        final UserProfile newUser;
+        try {
+            newUser = accountService.addUser(login, password, email);
+        }
+        catch (DuplicateKeyException e) {
+            LOGGER.info("Registration failed because user with email already exists", email);
+            return ResponseEntity.ok(new ErrorResponse(HttpStatus.CONFLICT, "This email is already taken"));
+        }
         final String sessionId = httpSession.getId();
         httpSession.setAttribute(sessionId, newUser.getId());
         LOGGER.info("Creating new user \"{}\" is successful", login);
@@ -68,7 +78,7 @@ public class RegistrationController {
         final UserProfile user = accountService.getUserByLogin(login);
         if (user == null) {
             LOGGER.info("Authorization failed because user {} does not exist", login);
-            return ResponseEntity.ok(new ErrorResponse(HttpStatus.NOT_FOUND, "user not found"));
+            return ResponseEntity.ok(new ErrorResponse(HttpStatus.NOT_FOUND, "User not found"));
         }
 
         if (user.getPassword().equals(password)) {

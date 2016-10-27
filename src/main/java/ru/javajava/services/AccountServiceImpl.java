@@ -1,7 +1,6 @@
 package ru.javajava.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.javajava.DAO.UserDAO;
@@ -19,7 +18,7 @@ public class AccountServiceImpl implements AccountService {
     private UserDAO userDAO;
 
     @Override
-    public UserProfile addUser(String login, String password, String email) throws DuplicateKeyException {
+    public UserProfile addUser(String login, String password, String email) {
         return userDAO.addUser(login, password, email);
     }
 

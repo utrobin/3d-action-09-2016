@@ -13,21 +13,22 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ExceptionHandlerAdvice {
 
-    @ExceptionHandler(DuplicateKeyException.class)
-    public ResponseEntity handle(DuplicateKeyException e) {
-        return ResponseEntity.ok(new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR, "Already exists"));
-    }
+
 
     @ExceptionHandler(EmptyResultDataAccessException.class)
     public ResponseEntity handle(EmptyResultDataAccessException e) {
         return ResponseEntity.ok(new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR, "Not found"));
+                HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
+    }
+
+    @ExceptionHandler (AlreadyExistsException.class)
+    public ResponseEntity handle(AlreadyExistsException e) {
+        return ResponseEntity.ok(new ErrorResponse(
+                HttpStatus.CONFLICT, e.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity handle(Exception e) {
-        e.printStackTrace();
         return ResponseEntity.ok(new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()));
     }
