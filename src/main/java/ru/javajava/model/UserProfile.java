@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class UserProfile {
     private final String login;
     private final String email;
-    private final String password;
+    private String password;
     private int visits;
     private int rating;
     private long id;
@@ -32,6 +32,10 @@ public class UserProfile {
 
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getEmail() {
