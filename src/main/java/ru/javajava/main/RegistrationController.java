@@ -56,8 +56,8 @@ public class RegistrationController {
             LOGGER.info("Registration failed because user with email already exists", email);
             return ResponseEntity.ok(new ErrorResponse(HttpStatus.CONFLICT, "This email is already taken"));
         }
-        final String sessionId = httpSession.getId();
-        httpSession.setAttribute(sessionId, newUser.getId());
+        //final String sessionId = httpSession.getId();
+        httpSession.setAttribute("userId", newUser.getId());
         LOGGER.info("Creating new user \"{}\" is successful", login);
         return ResponseEntity.ok(new SuccessSignupResponse(login, email));
     }
@@ -84,8 +84,8 @@ public class RegistrationController {
         if (user.getPassword().equals(password)) {
             accountService.incrementVisits(user.getId());
             user.incrementVisits();
-            final String sessionId = httpSession.getId();
-            httpSession.setAttribute(sessionId, user.getId());
+            //final String sessionId = httpSession.getId();
+            httpSession.setAttribute("userId", user.getId());
             LOGGER.info("Authorization OK for user {}", login);
             return ResponseEntity.ok(new SuccessLoginResponse(login, user.getEmail(), user.getVisits()));
         }
