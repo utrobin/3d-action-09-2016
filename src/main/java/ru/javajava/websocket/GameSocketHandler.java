@@ -41,22 +41,41 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) throws AuthenticationException {
-        final Long userId = (Long) webSocketSession.getAttributes().get("userId");
-        if (accountService.getUserById(userId) == null) {
-            throw new AuthenticationException("Only authenticated users allowed to play a game");
-        }
+        final Long userId = 1L; //(Long) webSocketSession.getAttributes().get("userId");
+//        if (accountService.getUserById(userId) == null) {
+//            throw new AuthenticationException("Only authenticated users allowed to play a game");
+//        }
         remotePointService.registerUser(userId, webSocketSession);
         //pingService.refreshPing(userId);
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws AuthenticationException {
-        final Long userId = (Long) session.getAttributes().get("userId");
-        final UserProfile user;
-        if ((user = accountService.getUserById(userId)) == null) {
-            throw new AuthenticationException("Only authenticated users allowed to play a game");
+        final Long userId = 1L; //(Long) session.getAttributes().get("userId");
+        UserProfile user;
+
+
+
+        final Message msg;
+        try {
+            msg = objectMapper.readValue(message.getPayload(), Message.class);
+        } catch (IOException ex) {
+            LOGGER.error("wrong json format at ping response", ex);
+            return;
         }
-        handleMessage(user, message);
+        try {
+            remotePointService.sendMessageToUser(1L, msg);
+        }
+        catch (Exception e) {
+
+        }
+
+
+
+//        if ((user = accountService.getUserById(userId)) == null) {
+//            throw new AuthenticationException("Only authenticated users allowed to play a game");
+//        }
+       // handleMessage(user, message);
     }
 
     @SuppressWarnings("OverlyBroadCatchBlock")

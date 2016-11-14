@@ -1,10 +1,7 @@
 package ru.javajava.mechanics;
 
-import org.jetbrains.annotations.NotNull;
 import ru.javajava.mechanics.avatar.GameUser;
-import ru.javajava.model.UserProfile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 

@@ -34,7 +34,6 @@ public class UserDAO {
         initTable();
     }
 
-
     public void initTable() {
         final String query = "CREATE TABLE IF NOT EXISTS user (" +
                 "id BIGINT NOT NULL auto_increment PRIMARY KEY," +
