@@ -55,6 +55,11 @@ public class UserDAO {
         return user;
     }
 
+    public int removeUser (long id) {
+        final String query = "DELETE FROM user WHERE id = ?;";
+        return template.update(query, id);
+    }
+
 
     public UserProfile getUserByLogin(String login) throws EmptyResultDataAccessException {
         final String query = "SELECT * FROM user WHERE login = ?;";

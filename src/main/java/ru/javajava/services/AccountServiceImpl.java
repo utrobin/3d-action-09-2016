@@ -23,6 +23,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public int removeUser(long id) {
+        return userDAO.removeUser(id);
+    }
+
+    @Override
     public UserProfile getUserByLogin(String login) {
         try {
             return userDAO.getUserByLogin(login);

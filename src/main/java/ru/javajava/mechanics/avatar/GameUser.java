@@ -1,6 +1,8 @@
 package ru.javajava.mechanics.avatar;
 
 import org.jetbrains.annotations.NotNull;
+import ru.javajava.mechanics.base.Coords;
+import ru.javajava.mechanics.base.ServerPlayerSnap;
 import ru.javajava.model.UserProfile;
 
 /**
@@ -9,14 +11,14 @@ import ru.javajava.model.UserProfile;
 public class GameUser {
     private final UserProfile userProfile;
    // private final TimingPart timingPart;
-   // private final Square square;
+    private final Sphere sphere;
 
     //TODO: Collider
 
 
-    public GameUser(@NotNull UserProfile userProfile) {
+    public GameUser(UserProfile userProfile) {
         this.userProfile = userProfile;
-   //     square = new Square();
+        sphere = new Sphere();
    //     this.timingPart = new TimingPart();
     }
 
@@ -26,19 +28,25 @@ public class GameUser {
         return userProfile;
     }
 
+    public void setCoords (Coords coords) {
+        this.sphere.setCoords(coords);
+    }
+
+    public Coords getCoords () {
+        return sphere.getCoords();
+    }
+
 
 
     public long getId() {
         return userProfile.getId();
     }
 
-//    @NotNull
-//    public ServerPlayerSnap generateSnap() {
-//
-//        final ServerPlayerSnap result = new ServerPlayerSnap();
-//        result.setUserId(getId());
-//        result.setPlayerSquare(square.getSnap());
-//        return result;
-//    }
+    public ServerPlayerSnap generateSnap() {
+        final ServerPlayerSnap result = new ServerPlayerSnap();
+        result.setUserId(getId());
+        result.setPlayerCoords(sphere.getCoords());
+        return result;
+    }
 }
 

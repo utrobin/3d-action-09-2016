@@ -19,12 +19,12 @@ public class Message {
     public Message() {
     }
 
-    public Message(@NotNull String type, @NotNull String content) {
+    public Message(String type, String content) {
         this.type = type;
         this.content = content;
     }
 
-    public Message(@NotNull Class clazz, @NotNull String content) {
+    public Message(Class clazz, String content) {
         //noinspection ConstantConditions
         this(clazz.getName(), content);
     }
