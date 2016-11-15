@@ -8,11 +8,17 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import ru.javajava.MapForTwoUsers;
+import ru.javajava.mechanics.base.Coords;
 import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountService;
 
 import javax.naming.AuthenticationException;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by ivan on 14.11.16.
@@ -30,6 +36,11 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
+    private static final Map<WebSocketSession, Long> sessionToId = new HashMap<>();
+
+
+
 
     public GameSocketHandler(@NotNull MessageHandlerContainer messageHandlerContainer, /*@NotNull PingService pingService, */
                              @NotNull AccountService accountService, @NotNull RemotePointService remotePointService) {
@@ -41,34 +52,60 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) throws AuthenticationException {
-        final Long userId = 1L; //(Long) webSocketSession.getAttributes().get("userId");
+
 //        if (accountService.getUserById(userId) == null) {
 //            throw new AuthenticationException("Only authenticated users allowed to play a game");
 //        }
-        remotePointService.registerUser(userId, webSocketSession);
+        //remotePointService.registerUser(userId, webSocketSession);
         //pingService.refreshPing(userId);
+
+
+        if (MapForTwoUsers.getFirst() != null) {
+            sessionToId.put(webSocketSession, 2L);
+            MapForTwoUsers.addSecond(webSocketSession);
+            LOGGER.info("Connection established for second user");
+        }
+        else {
+            sessionToId.put(webSocketSession, 1L);
+            MapForTwoUsers.addFirst(webSocketSession);
+            LOGGER.info("Connection established for first user");
+        }
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws AuthenticationException {
-        final Long userId = 1L; //(Long) session.getAttributes().get("userId");
+    protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws AuthenticationException {
+        final Long userId = sessionToId.get(session);  //(Long) session.getAttributes().get("userId");
         UserProfile user;
 
 
+        String coords = textMessage.getPayload();
+        if (MapForTwoUsers.getFirst().equals(session)) {
+            WebSocketSession secondPlayer = MapForTwoUsers.getSecond();
+            if (secondPlayer != null) {
+                try {
+                    secondPlayer.sendMessage(new TextMessage(coords));
+                    LOGGER.info("Sending to SECOND");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-        final Message msg;
-        try {
-            msg = objectMapper.readValue(message.getPayload(), Message.class);
-        } catch (IOException ex) {
-            LOGGER.error("wrong json format at ping response", ex);
-            return;
+            }
         }
-        try {
-            remotePointService.sendMessageToUser(1L, msg);
-        }
-        catch (Exception e) {
+        else {
+            WebSocketSession firstPlayer = MapForTwoUsers.getFirst();
+            if (firstPlayer != null) {
+                try {
+                    firstPlayer.sendMessage(new TextMessage(coords));
+                    LOGGER.info("Sending to FIRST");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
+            }
         }
+
+
+
 
 
 
@@ -84,6 +121,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
         final Message message;
         try {
             message = objectMapper.readValue(text.getPayload(), Message.class);
+            LOGGER.info("New message from user with ID={}: {}, type: {}", userProfile.getId(), message.getContent(), message.getType());
         } catch (IOException ex) {
             LOGGER.error("wrong json format at ping response", ex);
             return;
@@ -105,14 +143,20 @@ public class GameSocketHandler extends TextWebSocketHandler {
         final Long userId = (Long) webSocketSession.getAttributes().get("userId");
         if (userId == null) {
             LOGGER.warn("User disconnected but his session was not found (closeStatus=" + closeStatus + ')');
-            return;
+            //return;
         }
-        remotePointService.removeUser(userId);
+        //remotePointService.removeUser(userId);
+
+        // debug
+        MapForTwoUsers.clear();
+        sessionToId.clear();
+
     }
 
     @Override
     public boolean supportsPartialMessages() {
         return false;
     }
+
 }
 
