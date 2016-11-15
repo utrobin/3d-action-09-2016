@@ -67,6 +67,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
         sendIdToClient(webSocketSession, user.getId());
 
+
         // Попытка зарегать юзера в JoinGameHandler
         final Message message = new Message(JoinGame.Request.class, "{}");
         try {
@@ -79,6 +80,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws AuthenticationException {
+
 //        final Long userId = (Long) session.getAttributes().get("userId");
 //        final UserProfile user;
 //        if (userId == null || (user = accountService.getUserById(userId)) == null) {

@@ -38,6 +38,10 @@ public class ServerSnapService {
         }
         final ServerSnap snap = new ServerSnap();
 
+        if (playersSnaps.isEmpty()) {
+            throw new RuntimeException("No snapshots for this session - aborting");
+        }
+
         snap.setPlayers(playersSnaps);
         try {
             final WebSocketMessage<String> message = new TextMessage(objectMapper.writeValueAsString(snap));
@@ -45,7 +49,7 @@ public class ServerSnapService {
                 remotePointService.sendMessageToUser(player.getId(), message);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Failed sending snapshot", e);
+            e.printStackTrace();
         }
 
     }

@@ -114,7 +114,7 @@ public class GameMechanicsImpl implements GameMechanics {
             try {
                 serverSnapshotService.sendSnapshotsFor(session);
             } catch (RuntimeException ex) {
-                LOGGER.error("Failed send snapshots, terminating the session", ex);
+                LOGGER.error("No snapshots, terminating the session", ex);
                 sessionsToTerminate.add(session);
                 rooms--;
             }
