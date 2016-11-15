@@ -63,27 +63,29 @@ public class GameSocketHandler extends TextWebSocketHandler {
         if (MapForTwoUsers.getFirst() != null) {
             sessionToId.put(webSocketSession, 2L);
             MapForTwoUsers.addSecond(webSocketSession);
+            sendIdToClient(webSocketSession, 2L);
             LOGGER.info("Connection established for second user");
         }
         else {
             sessionToId.put(webSocketSession, 1L);
             MapForTwoUsers.addFirst(webSocketSession);
+            sendIdToClient(webSocketSession, 1L);
             LOGGER.info("Connection established for first user");
         }
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws AuthenticationException {
-        final Long userId = sessionToId.get(session);  //(Long) session.getAttributes().get("userId");
+        //final Long userId = sessionToId.get(session);  //(Long) session.getAttributes().get("userId");
         UserProfile user;
 
 
-        String coords = textMessage.getPayload();
+
         if (MapForTwoUsers.getFirst().equals(session)) {
             WebSocketSession secondPlayer = MapForTwoUsers.getSecond();
             if (secondPlayer != null) {
                 try {
-                    secondPlayer.sendMessage(new TextMessage(coords));
+                    secondPlayer.sendMessage(textMessage);
                     LOGGER.info("Sending to SECOND");
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -95,7 +97,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
             WebSocketSession firstPlayer = MapForTwoUsers.getFirst();
             if (firstPlayer != null) {
                 try {
-                    firstPlayer.sendMessage(new TextMessage(coords));
+                    firstPlayer.sendMessage(textMessage);
                     LOGGER.info("Sending to FIRST");
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -118,19 +120,19 @@ public class GameSocketHandler extends TextWebSocketHandler {
     @SuppressWarnings("OverlyBroadCatchBlock")
     private void handleMessage(UserProfile userProfile, TextMessage text) {
 
-        final Message message;
+
         try {
-            message = objectMapper.readValue(text.getPayload(), Message.class);
-            LOGGER.info("New message from user with ID={}: {}, type: {}", userProfile.getId(), message.getContent(), message.getType());
+            ClientRequest request = objectMapper.readValue(text.getPayload(), ClientRequest.class);
+            //LOGGER.info("New message from user with ID={}: {}, type: {}", userProfile.getId(), message.getContent(), message.getType());
         } catch (IOException ex) {
-            LOGGER.error("wrong json format at ping response", ex);
+            //LOGGER.error("wrong json format at ping response", ex);
             return;
         }
-        try {
-            messageHandlerContainer.handle(message, userProfile.getId());
-        } catch (HandleException e) {
-            LOGGER.error("Can't handle message of type " + message.getType() + " with content: " + message.getContent(), e);
-        }
+//        try {
+//            messageHandlerContainer.handle(message, userProfile.getId());
+//        } catch (HandleException e) {
+//            LOGGER.error("Can't handle message of type " + message.getType() + " with content: " + message.getContent(), e);
+       // }
     }
 
     @Override
@@ -158,5 +160,16 @@ public class GameSocketHandler extends TextWebSocketHandler {
         return false;
     }
 
+
+    private void sendIdToClient(WebSocketSession session, long id) {
+        try {
+            final String json = objectMapper.writeValueAsString(id);
+            session.sendMessage(new TextMessage(json));
+        }
+        catch (Exception e) {
+
+        }
+
+    }
 }
 
