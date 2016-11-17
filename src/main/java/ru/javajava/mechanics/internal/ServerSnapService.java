@@ -1,10 +1,7 @@
 package ru.javajava.mechanics.internal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.xml.internal.ws.developer.MemberSubmissionAddressing;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketMessage;
 import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.mechanics.base.ServerPlayerSnap;

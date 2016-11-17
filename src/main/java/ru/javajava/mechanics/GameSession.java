@@ -3,7 +3,6 @@ package ru.javajava.mechanics;
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.model.UserProfile;
 
-import javax.jws.soap.SOAPBinding;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;

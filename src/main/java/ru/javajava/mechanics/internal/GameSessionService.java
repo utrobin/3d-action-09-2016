@@ -1,6 +1,5 @@
 package ru.javajava.mechanics.internal;
 
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -10,7 +9,6 @@ import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.model.UserProfile;
 import ru.javajava.websocket.RemotePointService;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**

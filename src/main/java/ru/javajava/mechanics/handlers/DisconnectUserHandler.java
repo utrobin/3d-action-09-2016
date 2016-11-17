@@ -1,10 +1,7 @@
 package ru.javajava.mechanics.handlers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.javajava.mechanics.GameMechanics;
-import ru.javajava.mechanics.base.UserSnap;
 import ru.javajava.mechanics.requests.Disconnect;
 import ru.javajava.websocket.HandleException;
 import ru.javajava.websocket.MessageHandler;
