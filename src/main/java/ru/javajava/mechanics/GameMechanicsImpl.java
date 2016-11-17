@@ -11,7 +11,6 @@ import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountService;
 import ru.javajava.websocket.RemotePointService;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -40,6 +39,7 @@ public class GameMechanicsImpl implements GameMechanics {
         private final Queue<Runnable> tasks = new ConcurrentLinkedQueue<>();
 
         private int rooms = 0;
+        GameSession mainSession;
 
 
     public GameMechanicsImpl(AccountService accountService, ServerSnapService serverSnapshotService,
@@ -65,17 +65,24 @@ public class GameMechanicsImpl implements GameMechanics {
         waiters.add(user);
     }
 
+    @Override
+    public void removeUser(long user) {
+        if (gameSessionService.isPlaying(user)) {
+            gameSessionService.removePlayer(mainSession, accountService.getUserById(user));
+        }
+    }
+
     private void tryStartGames() {
         final List<UserProfile> matchedPlayers = new LinkedList<>();
 
-        while (waiters.size() >= 3 || waiters.size() >= 1 && matchedPlayers.size() >= 1) {
+        while (waiters.size() >= 2 || waiters.size() >= 1 && matchedPlayers.size() >= 1) {
             final long candidate = waiters.poll();
             if (!insureCandidate(candidate)) {
                 continue;
             }
             matchedPlayers.add(accountService.getUserById(candidate));
-            if(matchedPlayers.size() == 3) {
-                gameSessionService.startGame(matchedPlayers);
+            if(matchedPlayers.size() == 2) {
+                mainSession = gameSessionService.startGame(matchedPlayers);
                 matchedPlayers.clear();
                 rooms++;
                 LOGGER.info("Started game, total rooms: {}", rooms);
@@ -121,7 +128,18 @@ public class GameMechanicsImpl implements GameMechanics {
         }
         sessionsToTerminate.forEach(gameSessionService::notifyGameIsOver);
 
-        tryStartGames();
+        // Пока только одна комната
+        if (mainSession == null) {
+            tryStartGames();
+        }
+        else {
+            // Добавление к сущ. комнате
+            while (!waiters.isEmpty()) {
+                long playerId = waiters.poll();
+                UserProfile user = accountService.getUserById(playerId);
+                gameSessionService.addPlayer(mainSession, user);
+            }
+        }
         clientSnapshotsService.clear();
     }
 

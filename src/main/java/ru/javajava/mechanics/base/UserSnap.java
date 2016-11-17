@@ -1,9 +1,7 @@
 package ru.javajava.mechanics.base;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by ivan on 14.11.16.

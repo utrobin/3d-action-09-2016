@@ -3,15 +3,12 @@ package ru.javajava.websocket;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.jetty.websocket.api.WebSocketException;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,7 +41,9 @@ public class RemotePointService {
     public void removeUser (WebSocketSession session) {
         Long userId = sessionToId.get(session);
         sessionToId.remove(session);
-        sessions.remove(userId);
+        if (userId != null) {
+            sessions.remove(userId);
+        }
     }
 
     public void cutDownConnection(Long userId, CloseStatus closeStatus) {

@@ -1,7 +1,6 @@
 package ru.javajava.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 

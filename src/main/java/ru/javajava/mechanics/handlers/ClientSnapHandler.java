@@ -16,7 +16,6 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class ClientSnapHandler extends MessageHandler<UserSnap> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClientSnapHandler.class.getName());
     private GameMechanics gameMechanics;
     private final MessageHandlerContainer messageHandlerContainer;
 

@@ -1,6 +1,5 @@
 package ru.javajava.mechanics.base;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 

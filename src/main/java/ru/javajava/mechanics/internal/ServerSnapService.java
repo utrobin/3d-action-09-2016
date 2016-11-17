@@ -1,8 +1,6 @@
 package ru.javajava.mechanics.internal;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
@@ -10,7 +8,6 @@ import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.mechanics.base.ServerPlayerSnap;
 import ru.javajava.mechanics.base.ServerSnap;
-import ru.javajava.websocket.Message;
 import ru.javajava.websocket.RemotePointService;
 
 import java.io.IOException;

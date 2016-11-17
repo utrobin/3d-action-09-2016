@@ -1,7 +1,5 @@
 package ru.javajava.mechanics.base;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
 
 /**

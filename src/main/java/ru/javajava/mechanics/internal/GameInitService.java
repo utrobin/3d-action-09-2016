@@ -1,18 +1,6 @@
 package ru.javajava.mechanics.internal;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.CloseStatus;
-import ru.javajava.mechanics.GameSession;
-import ru.javajava.mechanics.avatar.GameUser;
-import ru.javajava.websocket.Message;
-import ru.javajava.websocket.RemotePointService;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Created by ivan on 15.11.16.

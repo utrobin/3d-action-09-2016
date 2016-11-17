@@ -18,7 +18,7 @@ public class GameMessageHandlerContainer implements MessageHandlerContainer {
     final Map<Class<?>, MessageHandler<?>> handlerMap = new HashMap<>();
 
     @Override
-    public void handle(@NotNull Message message, @NotNull long forUser) throws HandleException {
+    public void handle(Message message, long forUser) throws HandleException {
 
         final Class clazz;
         try {
@@ -35,7 +35,7 @@ public class GameMessageHandlerContainer implements MessageHandlerContainer {
     }
 
     @Override
-    public <T> void registerHandler(@NotNull Class<T> clazz, MessageHandler<T> handler) {
+    public <T> void registerHandler(Class<T> clazz, MessageHandler<T> handler) {
         handlerMap.put(clazz, handler);
     }
 }

@@ -1,8 +1,11 @@
 package ru.javajava.mechanics.handlers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.javajava.mechanics.GameMechanics;
-import ru.javajava.mechanics.requests.JoinGame;
+import ru.javajava.mechanics.base.UserSnap;
+import ru.javajava.mechanics.requests.Disconnect;
 import ru.javajava.websocket.HandleException;
 import ru.javajava.websocket.MessageHandler;
 import ru.javajava.websocket.MessageHandlerContainer;
@@ -10,26 +13,27 @@ import ru.javajava.websocket.MessageHandlerContainer;
 import javax.annotation.PostConstruct;
 
 /**
- * Created by ivan on 15.11.16.
+ * Created by ivan on 17.11.16.
  */
 @Component
-public class JoinGameHandler extends MessageHandler<JoinGame.Request> {
+public class DisconnectUserHandler extends MessageHandler<Disconnect.Request> {
     private final GameMechanics gameMechanics;
     private final MessageHandlerContainer messageHandlerContainer;
 
-    public JoinGameHandler(GameMechanics gameMechanics, MessageHandlerContainer messageHandlerContainer) {
-        super(JoinGame.Request.class);
+    public DisconnectUserHandler(GameMechanics gameMechanics, MessageHandlerContainer messageHandlerContainer) {
+        super(Disconnect.Request.class);
         this.gameMechanics = gameMechanics;
         this.messageHandlerContainer = messageHandlerContainer;
     }
 
     @PostConstruct
     private void init() {
-        messageHandlerContainer.registerHandler(JoinGame.Request.class, this);
+        messageHandlerContainer.registerHandler(Disconnect.Request.class, this);
     }
 
     @Override
-    public void handle(JoinGame.Request message, long forUser) throws HandleException {
-        gameMechanics.addUser(forUser);
+    public void handle(Disconnect.Request message, long forUser) throws HandleException {
+        gameMechanics.removeUser(forUser);
     }
 }
+

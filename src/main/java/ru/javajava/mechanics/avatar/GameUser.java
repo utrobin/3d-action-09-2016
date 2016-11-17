@@ -1,6 +1,5 @@
 package ru.javajava.mechanics.avatar;
 
-import org.jetbrains.annotations.NotNull;
 import ru.javajava.mechanics.base.Coords;
 import ru.javajava.mechanics.base.ServerPlayerSnap;
 import ru.javajava.model.UserProfile;
@@ -47,6 +46,20 @@ public class GameUser {
         result.setUserId(getId());
         result.setPlayerCoords(sphere.getCoords());
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final GameUser other = (GameUser) o;
+        return this.getId() == other.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return (int)this.getId();
     }
 }
 

@@ -11,6 +11,8 @@ public interface GameMechanics {
 
     void addUser(long user);
 
+    void removeUser (long user);
+
     void gmStep(long frameTime);
 
     void reset();

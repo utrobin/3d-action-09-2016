@@ -9,11 +9,13 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 import ru.javajava.exceptions.AlreadyExistsException;
 import ru.javajava.mechanics.base.UserSnap;
+import ru.javajava.mechanics.requests.Disconnect;
 import ru.javajava.mechanics.requests.JoinGame;
 import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountService;
 
 import javax.naming.AuthenticationException;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -32,7 +34,8 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
+    private final AtomicLong ID_GENERATOR;
+    int userCount;
 
 
 
@@ -45,14 +48,20 @@ public class GameSocketHandler extends TextWebSocketHandler {
     //    this.pingService = pingService;
         this.accountService = accountService;
         this.remotePointService = remotePointService;
+        Random generator = new Random();
+        ID_GENERATOR = new AtomicLong(generator.nextInt());
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) throws AuthenticationException {
         final long userNumber = ID_GENERATOR.getAndIncrement(); //(Long) webSocketSession.getAttributes().get("userId");
 //        if (id == null || accountService.getUserById(id) == null) {
-//            throw new AuthenticationException("Only authenticated users allowed to play a game");
+//            throw new AuthenticationException("Only authenticated users allowed to play a game")
+
 //        }
+
+
+
         final UserProfile user;
         try {
             user = accountService.addUser("User #" + userNumber, "1", "park@mail.ru" + userNumber);
@@ -61,7 +70,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
             LOGGER.error("User already exists!");
             return;
         }
-        LOGGER.info("Added User #{}", userNumber);
+        LOGGER.info("Added User #{}", ++userCount);
         remotePointService.registerUser(user.getId(), webSocketSession);
         //pingService.refreshPing(userId);
 
@@ -111,10 +120,22 @@ public class GameSocketHandler extends TextWebSocketHandler {
 //        }
 
         Long userId = remotePointService.get(webSocketSession);
-        accountService.removeUser(userId);
+        final Message message = new Message(Disconnect.Request.class, "{}");
+        try {
+            if (userId != null) {
+                messageHandlerContainer.handle(message, userId);
+                accountService.removeUser(userId);
+            }
+        }
+        catch (HandleException e) {
+            LOGGER.error("Can't remove user from game");
+        }
+
+
 
         LOGGER.info("User has disconnected");
-       remotePointService.removeUser(webSocketSession);
+        remotePointService.removeUser(webSocketSession);
+        userCount--;
     }
 
     private void sendIdToClient(WebSocketSession session, long id) {

@@ -1,7 +1,5 @@
 package ru.javajava.websocket;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * Created by ivan on 14.11.16.
  */

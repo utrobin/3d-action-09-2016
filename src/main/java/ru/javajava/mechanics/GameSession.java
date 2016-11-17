@@ -3,6 +3,7 @@ package ru.javajava.mechanics;
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.model.UserProfile;
 
+import javax.jws.soap.SOAPBinding;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -33,6 +34,15 @@ public class GameSession {
 
     public List<GameUser> getPlayers() {
         return players;
+    }
+
+    public void addPlayer (UserProfile player) {
+        players.add(new GameUser(player));
+    }
+
+    public void removePlayer (UserProfile player) {
+        final GameUser gameUser = new GameUser(player);
+        players.remove(gameUser);
     }
 
     @Override
