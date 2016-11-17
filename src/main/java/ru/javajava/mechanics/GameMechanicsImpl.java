@@ -3,14 +3,17 @@ package ru.javajava.mechanics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.mechanics.base.UserSnap;
 import ru.javajava.mechanics.internal.ClientSnapService;
 import ru.javajava.mechanics.internal.GameSessionService;
 import ru.javajava.mechanics.internal.ServerSnapService;
 import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountService;
+import ru.javajava.websocket.Message;
 import ru.javajava.websocket.RemotePointService;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -40,6 +43,8 @@ public class GameMechanicsImpl implements GameMechanics {
 
         private int rooms = 0;
         GameSession mainSession;
+        private boolean needDeleteUser = false;
+        private long deletedUserId;
 
 
     public GameMechanicsImpl(AccountService accountService, ServerSnapService serverSnapshotService,
@@ -70,6 +75,8 @@ public class GameMechanicsImpl implements GameMechanics {
         if (gameSessionService.isPlaying(user)) {
             gameSessionService.removePlayer(mainSession, accountService.getUserById(user));
         }
+        needDeleteUser = true;
+        deletedUserId = user;
     }
 
     private void tryStartGames() {
@@ -125,6 +132,21 @@ public class GameMechanicsImpl implements GameMechanics {
                 sessionsToTerminate.add(session);
                 rooms--;
                 mainSession = null;
+            }
+
+            // Удаление юзера
+            if (needDeleteUser) {
+                List<GameUser> players = session.getPlayers();
+                final Message message = new Message(Message.REMOVE_USER, String.valueOf(deletedUserId));
+                for (GameUser player: players) {
+                    try {
+                        remotePointService.sendMessageToUser(player.getId(), message);
+                    }
+                    catch (IOException e) {
+                        LOGGER.error("Error sending info about removing user to player {}", player.getId());
+                    }
+                }
+                needDeleteUser = false;
             }
         }
         sessionsToTerminate.forEach(gameSessionService::notifyGameIsOver);

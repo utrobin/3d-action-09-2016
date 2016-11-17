@@ -1,11 +1,19 @@
 package ru.javajava.websocket;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by ivan on 14.11.16.
  */
 public class Message {
+    @JsonProperty("type")
     private String type;
+    @JsonProperty("data")
     private String content;
+
+    public static final String INITIALIZE_USER = "InitializePlayer";
+    public static final String SNAPSHOT = "Snapshot";
+    public static final String REMOVE_USER = "RemovePlayer";
 
     public String getType() {
         return type;

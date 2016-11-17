@@ -133,14 +133,17 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
 
 
+
+
         LOGGER.info("User has disconnected");
         remotePointService.removeUser(webSocketSession);
         userCount--;
     }
 
     private void sendIdToClient(WebSocketSession session, long id) {
+        final Message message = new Message(Message.INITIALIZE_USER, String.valueOf(id));
         try {
-            final String json = objectMapper.writeValueAsString(id);
+            final String json = objectMapper.writeValueAsString(message);
             session.sendMessage(new TextMessage(json));
         }
         catch (Exception e) {
