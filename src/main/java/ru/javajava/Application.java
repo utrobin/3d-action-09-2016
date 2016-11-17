@@ -6,6 +6,9 @@ import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.handler.PerConnectionWebSocketHandler;
 import org.springframework.web.socket.server.jetty.JettyRequestUpgradeStrategy;
@@ -22,6 +25,15 @@ public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(new Object[]{WebSocketConfig.class, Application.class}, args);
+    }
+    @Bean
+     public WebMvcConfigurer corsConfigurer() {
+                return new WebMvcConfigurerAdapter() {
+             @Override
+             public void addCorsMappings(CorsRegistry registry) {
+                                registry.addMapping("/**").allowedOrigins("*");
+                            }
+         };
     }
 
     @Bean

@@ -124,6 +124,7 @@ public class GameMechanicsImpl implements GameMechanics {
                 LOGGER.error("No snapshots, terminating the session", ex);
                 sessionsToTerminate.add(session);
                 rooms--;
+                mainSession = null;
             }
         }
         sessionsToTerminate.forEach(gameSessionService::notifyGameIsOver);
