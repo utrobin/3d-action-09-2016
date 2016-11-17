@@ -49,7 +49,6 @@ public class ServerSnapService {
                 remotePointService.sendMessageToUser(player.getId(), message);
             }
         } catch (IOException e) {
-            e.printStackTrace();
         }
 
     }

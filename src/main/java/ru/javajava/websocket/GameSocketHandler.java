@@ -68,7 +68,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
         sendIdToClient(webSocketSession, user.getId());
 
 
-        // Попытка зарегать юзера в JoinGameHandler
+        // Регистрация юзера в JoinGameHandler
         final Message message = new Message(JoinGame.Request.class, "{}");
         try {
             messageHandlerContainer.handle(message, user.getId());
@@ -87,7 +87,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 //            throw new AuthenticationException("Only authenticated users allowed to play a game");
 //        }
         Long userId = remotePointService.get(session);
-        final Message message = new Message(UserSnap.class.getName(), textMessage.getPayload()); // Пока принимаем только снапы
+        final Message message = new Message(UserSnap.class.getName(), textMessage.getPayload());
         try {
             messageHandlerContainer.handle(message, userId);
         } catch (HandleException e) {
@@ -114,7 +114,6 @@ public class GameSocketHandler extends TextWebSocketHandler {
         accountService.removeUser(userId);
 
         LOGGER.info("User has disconnected");
-
        remotePointService.removeUser(webSocketSession);
     }
 
