@@ -41,7 +41,7 @@ public class GameMechanicsImpl implements GameMechanics {
 
         private int rooms = 0;
 
-    @SuppressWarnings("LongLine")
+
     public GameMechanicsImpl(AccountService accountService, ServerSnapService serverSnapshotService,
                              RemotePointService remotePointService,
                              GameSessionService gameSessionService) {

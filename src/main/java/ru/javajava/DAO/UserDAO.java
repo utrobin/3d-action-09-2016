@@ -38,7 +38,7 @@ public class UserDAO {
         final String query = "CREATE TABLE IF NOT EXISTS user (" +
                 "id BIGINT NOT NULL auto_increment PRIMARY KEY," +
                 "login VARCHAR(30) NOT NULL UNIQUE," +
-                "password VARCHAR(30) NOT NULL," +
+                "password VARCHAR(100) NOT NULL," +
                 "email VARCHAR(30) UNIQUE," +
                 "rating INT NOT NULL DEFAULT 0," +
                 "visits INT NOT NULL DEFAULT 1) DEFAULT CHARSET utf8 DEFAULT COLLATE utf8_general_ci;";

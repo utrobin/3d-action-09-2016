@@ -17,17 +17,13 @@ import java.util.concurrent.Executors;
  */
 @Service
 public class MechanicsExecutor implements Runnable {
-    @NotNull
-    private static final Logger LOGGER = LoggerFactory.getLogger(MechanicsExecutor.class);
     private static final long STEP_TIME = 50;
 
-    @NotNull
     private final GameMechanics gameMechanics;
 
-    @NotNull
-    private Clock clock = Clock.systemDefaultZone();
+    private final Clock clock = Clock.systemDefaultZone();
 
-    private Executor tickExecutor = Executors.newSingleThreadExecutor();
+    private final Executor tickExecutor = Executors.newSingleThreadExecutor();
 
     @Autowired
     public MechanicsExecutor(@NotNull GameMechanics gameMechanics) {
