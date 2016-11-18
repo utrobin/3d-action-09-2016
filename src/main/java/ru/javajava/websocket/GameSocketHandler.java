@@ -144,6 +144,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
         final Message message = new Message(Message.INITIALIZE_USER, String.valueOf(id));
         try {
             final String json = objectMapper.writeValueAsString(message);
+	    LOGGER.info(json);
             session.sendMessage(new TextMessage(json));
         }
         catch (Exception e) {

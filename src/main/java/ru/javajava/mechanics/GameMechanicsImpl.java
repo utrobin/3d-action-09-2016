@@ -140,7 +140,8 @@ public class GameMechanicsImpl implements GameMechanics {
                 final Message message = new Message(Message.REMOVE_USER, String.valueOf(deletedUserId));
                 for (GameUser player: players) {
                     try {
-                        remotePointService.sendMessageToUser(player.getId(), message);
+                        LOGGER.info(message.getType() + ", " + message.getContent());
+			remotePointService.sendMessageToUser(player.getId(), message);
                     }
                     catch (IOException e) {
                         LOGGER.error("Error sending info about removing user to player {}", player.getId());
