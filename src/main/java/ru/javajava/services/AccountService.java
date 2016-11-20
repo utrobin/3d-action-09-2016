@@ -1,5 +1,6 @@
 package ru.javajava.services;
 
+import ru.javajava.DAO.UserDAO;
 import ru.javajava.exceptions.AlreadyExistsException;
 import ru.javajava.model.UserProfile;
 
@@ -13,7 +14,7 @@ public interface AccountService {
     UserProfile getUserByLogin(String login);
     UserProfile getUserById(long id);
     int removeUser (long id);
-    List<UserProfile> getBestUsers(int page);
+    UserDAO.ResultBean getBestUsers(int page, int limit);
     void incrementVisits(long userId);
     void setRating(long userId, int rating);
     void incrementRating(long userId);
