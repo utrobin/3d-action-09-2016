@@ -26,7 +26,7 @@ import java.util.Map;
 public class UserDAO {
 
     private final JdbcTemplate template;
-    private int pagesCached = -1;
+    private int numPagesCached = -1;
 
     @SuppressWarnings("unused")
     public UserDAO(JdbcTemplate template) {
@@ -51,12 +51,13 @@ public class UserDAO {
         template.update(new UserPstCreator(user), keyHolder);
         final Map<String, Object> keys = keyHolder.getKeys();
         user.setId((Long)keys.get("GENERATED_KEY"));
-        pagesCached = -1;
+        numPagesCached = -1;
         return user;
     }
 
     public int removeUser (long id) {
         final String query = "DELETE FROM user WHERE id = ?;";
+        numPagesCached = -1;
         return template.update(query, id);
     }
 
@@ -97,19 +98,16 @@ public class UserDAO {
 
 
 
-    public List<UserProfile> getBestUsers(int page, int limit) throws EmptyResultDataAccessException {
-        if (pagesCached == -1) {
+    public ResultBean getBestUsers(int page, int limit) throws EmptyResultDataAccessException {
+        if (numPagesCached == -1) {
             final String count = "SELECT count(*) FROM user;";
             final int numRows = template.queryForObject(count, Integer.class);
-            pagesCached = numRows / limit + 1;
+            numPagesCached = numRows / limit + 1;
         }
         final int offset = limit * (page - 1);
         final String query = "SELECT * FROM user ORDER BY rating DESC LIMIT ? OFFSET ?;";
         final List<UserProfile> users = template.query(query, userMapper, limit, offset);
-        for (UserProfile user: users) {
-            user.setPassword(Integer.toString(pagesCached));
-        }
-        return users;
+        return new ResultBean(users, numPagesCached);
     }
 
     private static class UserPstCreator implements PreparedStatementCreator {
@@ -140,6 +138,17 @@ public class UserDAO {
         result.setId(id);
         return result;
     };
+
+
+    public static class ResultBean {
+        public List<UserProfile> users;
+        public int numPages;
+
+        public ResultBean(List<UserProfile> users, int numPages) {
+            this.users = users;
+            this.numPages = numPages;
+        }
+    }
 }
 
 

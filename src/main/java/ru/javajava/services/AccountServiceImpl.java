@@ -64,8 +64,7 @@ public class AccountServiceImpl implements AccountService {
 
 
     @Override
-    public List<UserProfile> getBestUsers(int page) {
-        final int limit = 10;
+    public UserDAO.ResultBean getBestUsers(int page, int limit) {
         return userDAO.getBestUsers(page, limit);
     }
 }
