@@ -11,14 +11,14 @@ import java.util.concurrent.atomic.AtomicLong;
  * Created by Администратор on 20.11.2016.
  */
 public class BestUsersResponse implements Serializable {
-    @JsonProperty("page")
-    private int page;
+    @JsonProperty("pages")
+    private int pages;
 
     @JsonProperty("users")
     private List<User> users;
 
-    public BestUsersResponse(int page, List<User> users) {
-        this.page = page;
+    public BestUsersResponse(int pages, List<User> users) {
+        this.pages = pages;
         this.users = users;
     }
 
@@ -29,13 +29,11 @@ public class BestUsersResponse implements Serializable {
         private String login;
         @JsonProperty("rating")
         private int rating;
-        @JsonIgnore
-        private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
-        public User(String login, int rating) {
+        public User(String login, int rating, long number) {
             this.login = login;
             this.rating = rating;
-            number = ID_GENERATOR.getAndIncrement();
+            this.number = number;
         }
 
         public long getNumber() {
