@@ -12,6 +12,7 @@ import ru.javajava.services.AccountService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by ivan on 24.10.16.
@@ -35,10 +36,12 @@ public class BestUsers {
             List<UserProfile> users = result.users;
 
             List<BestUsersResponse.User> resultUsers = new ArrayList<>();
+            final AtomicLong ID_GENERATOR = new AtomicLong(1);
             for (UserProfile user: users) {
                 String login = user.getLogin();
                 int rating = user.getRating();
-                BestUsersResponse.User newUser = new BestUsersResponse.User(login, rating);
+                long id = ID_GENERATOR.getAndIncrement();
+                BestUsersResponse.User newUser = new BestUsersResponse.User(login, rating, id);
                 resultUsers.add(newUser);
             }
 
