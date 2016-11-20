@@ -36,12 +36,12 @@ public class BestUsers {
 
             List<BestUsersResponse.User> resultUsers = new ArrayList<>();
             for (UserProfile user: users) {
-                BestUsersResponse.User newUser = new BestUsersResponse.User();
-                newUser.login = user.getLogin();
-                newUser.rating = user.getRating();
+                String login = user.getLogin();
+                int rating = user.getRating();
+                BestUsersResponse.User newUser = new BestUsersResponse.User(login, rating);
                 resultUsers.add(newUser);
             }
-            
+
             return ResponseEntity.ok(new BestUsersResponse(result.numPages, resultUsers));
         }
 }
