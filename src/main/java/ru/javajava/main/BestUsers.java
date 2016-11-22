@@ -36,7 +36,7 @@ public class BestUsers {
             List<UserProfile> users = result.users;
 
             List<BestUsersResponse.User> resultUsers = new ArrayList<>();
-            final AtomicLong ID_GENERATOR = new AtomicLong(1);
+            final AtomicLong ID_GENERATOR = new AtomicLong(limit*(page-1)+1);
             for (UserProfile user: users) {
                 String login = user.getLogin();
                 int rating = user.getRating();
