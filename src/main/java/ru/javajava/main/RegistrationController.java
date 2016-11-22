@@ -55,8 +55,7 @@ public class RegistrationController {
         final UserProfile newUser;
         try {
             newUser = accountService.addUser(login, hashedPassword, email);
-        }
-        catch (DuplicateKeyException e) {
+        } catch (DuplicateKeyException e) {
             LOGGER.info("Registration failed because user with email already exists", email);
             return ResponseEntity.ok(new ErrorResponse(HttpStatus.CONFLICT, "This email is already taken"));
         }
@@ -99,15 +98,25 @@ public class RegistrationController {
 
     @RequestMapping(path = "/api/logout", method = RequestMethod.POST)
     public HttpStatus logout(HttpSession httpSession) {
-        final String sessionId = httpSession.getId();
-        httpSession.removeAttribute(sessionId);
+        httpSession.removeAttribute("userId");
         LOGGER.info("Log out OK");
         return HttpStatus.OK;
     }
 
 
+    @RequestMapping(path = "/api/isauth", method = RequestMethod.POST)
+    public ResponseEntity isAuth(HttpSession httpSession) {
+        final Long isAuth = (Long) httpSession.getAttribute("userId");
+        if (isAuth != null) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.ok(false);
+        }
+    }
+
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -207,4 +216,5 @@ public class RegistrationController {
             return email;
         }
     }
+    
 }
