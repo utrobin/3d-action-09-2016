@@ -97,10 +97,16 @@ public class RegistrationController {
     }
 
     @RequestMapping(path = "/api/logout", method = RequestMethod.POST)
-    public HttpStatus logout(HttpSession httpSession) {
-        httpSession.removeAttribute("userId");
-        LOGGER.info("Log out OK");
-        return HttpStatus.OK;
+    public ResponseEntity logout(HttpSession httpSession) {
+        if  (httpSession.getAttribute("userId") != null) {
+            httpSession.removeAttribute("userId");
+            LOGGER.info("Log out OK");
+            return ResponseEntity.ok(true);
+        }
+        else {
+            LOGGER.error("Log out for not authenticated user");
+            return ResponseEntity.ok(false);
+        }
     }
 
 
