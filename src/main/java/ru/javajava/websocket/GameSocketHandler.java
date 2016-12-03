@@ -89,7 +89,6 @@ public class GameSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws AuthenticationException {
 
         final Long userId = (Long) session.getAttributes().get("userId");
-        LOGGER.info("Handled message: {}", textMessage.getPayload());
         final UserProfile user;
         if (userId == null || (user = accountService.getUserById(userId)) == null) {
             LOGGER.error("Only authenticated users allowed to play a game!");
@@ -97,9 +96,9 @@ public class GameSocketHandler extends TextWebSocketHandler {
         }
 
         final JSONObject sourceJson = new JSONObject(textMessage.getPayload());
-        LOGGER.info(sourceJson.getString("type"));
-        LOGGER.info(sourceJson.getString("data"));
-        final Message message = new Message(sourceJson.getString("type"), sourceJson.getString("data"));
+        JSONObject data = sourceJson.getJSONObject("data");
+        LOGGER.info(data.toString());
+        final Message message = new Message(sourceJson.getString("type"), data.toString());
 
         try {
             messageHandlerContainer.handle(message, userId);
