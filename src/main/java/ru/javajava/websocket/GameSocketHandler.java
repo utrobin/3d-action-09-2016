@@ -56,7 +56,8 @@ public class GameSocketHandler extends TextWebSocketHandler {
         final UserProfile player;
 
         if (id == null || (player = accountService.getUserById(id)) == null) {
-            throw new AuthenticationException("Only authenticated users allowed to play a game!");
+            LOGGER.error("Only authenticated users allowed to play a game!");
+            return;
         }
 
         if (remotePointService.get(id) != null) {
@@ -65,7 +66,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
         }
 
 
-        LOGGER.info("New player: {}", player.getLogin());
+        LOGGER.info("New player: {} with ID = {}", player.getLogin(), player.getId());
 
 
         remotePointService.registerUser(player.getId(), webSocketSession);
@@ -88,6 +89,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws AuthenticationException {
 
         final Long userId = (Long) session.getAttributes().get("userId");
+        LOGGER.info("Handled message: {}", textMessage.getPayload());
         final UserProfile user;
         if (userId == null || (user = accountService.getUserById(userId)) == null) {
             LOGGER.error("Only authenticated users allowed to play a game!");
