@@ -15,6 +15,7 @@ import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountService;
 
 import javax.naming.AuthenticationException;
+import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -92,11 +93,12 @@ public class GameSocketHandler extends TextWebSocketHandler {
             return;
         }
 
-        final Message message = new Message(UserSnap.class.getName(), textMessage.getPayload());
+
         try {
+            final Message message = objectMapper.readValue(textMessage.getPayload(), Message.class);
             messageHandlerContainer.handle(message, userId);
-        } catch (HandleException e) {
-            LOGGER.error("Can't handle message of type " + message.getType() + " with content: " + message.getContent(), e);
+        } catch (HandleException | IOException e) {
+            LOGGER.error("Can't handle message from user with ID={}, reason: {}", userId, e.getMessage());
         }
     }
 
@@ -131,7 +133,6 @@ public class GameSocketHandler extends TextWebSocketHandler {
         final Message message = new Message(Message.INITIALIZE_USER, String.valueOf(id));
         try {
             final String json = objectMapper.writeValueAsString(message);
-	    LOGGER.info(json);
             session.sendMessage(new TextMessage(json));
         }
         catch (Exception e) {

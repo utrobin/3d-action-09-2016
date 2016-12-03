@@ -31,7 +31,6 @@ public class Message {
     }
 
     public Message(Class clazz, String content) {
-        //noinspection ConstantConditions
         this(clazz.getName(), content);
     }
 }
