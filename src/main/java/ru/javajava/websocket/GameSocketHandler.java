@@ -1,6 +1,7 @@
 package ru.javajava.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
@@ -93,11 +94,12 @@ public class GameSocketHandler extends TextWebSocketHandler {
             return;
         }
 
+        final JSONObject sourceJson = new JSONObject(textMessage.getPayload());
+        final Message message = new Message(sourceJson.getString("type"), sourceJson.getString("data"));
 
         try {
-            final Message message = objectMapper.readValue(textMessage.getPayload(), Message.class);
             messageHandlerContainer.handle(message, userId);
-        } catch (HandleException | IOException e) {
+        } catch (HandleException e) {
             LOGGER.error("Can't handle message from user with ID={}, reason: {}", userId, e.getMessage());
         }
     }
