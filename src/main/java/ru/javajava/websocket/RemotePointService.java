@@ -21,11 +21,9 @@ public class RemotePointService {
     private final Map<Long, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final Map<WebSocketSession, Long> sessionToId = new ConcurrentHashMap<>();
 
     public void registerUser(Long userId, WebSocketSession webSocketSession) {
         sessions.put(userId, webSocketSession);
-        sessionToId.put(webSocketSession, userId);
     }
 
     public boolean isConnected(Long userId) {
@@ -34,18 +32,9 @@ public class RemotePointService {
 
     public void removeUser(Long userId)
     {
-        WebSocketSession session = sessions.get(userId);
         sessions.remove(userId);
-        sessionToId.remove(session);
     }
 
-    public void removeUser (WebSocketSession session) {
-        Long userId = sessionToId.get(session);
-        sessionToId.remove(session);
-        if (userId != null) {
-            sessions.remove(userId);
-        }
-    }
 
     public void cutDownConnection(Long userId, CloseStatus closeStatus) {
         final WebSocketSession webSocketSession = sessions.get(userId);
@@ -58,7 +47,7 @@ public class RemotePointService {
     }
 
     public void sendMessageToUser(Long userId, Message message) throws IOException {
-        WebSocketMessage<String> webSocketMessage = new TextMessage(objectMapper.writeValueAsString(message));
+        final WebSocketMessage<String> webSocketMessage = new TextMessage(objectMapper.writeValueAsString(message));
         final WebSocketSession webSocketSession = sessions.get(userId);
         if (webSocketSession == null) {
             throw new IOException("no game websocket for user " + userId);
@@ -71,10 +60,6 @@ public class RemotePointService {
         } catch (JsonProcessingException | WebSocketException e) {
             throw new IOException("Unable to send message", e);
         }
-    }
-
-    public Long get (WebSocketSession session) {
-        return sessionToId.get(session);
     }
 
     public WebSocketSession get (long userId) {

@@ -54,9 +54,15 @@ public class GameSocketHandler extends TextWebSocketHandler {
         final UserProfile player;
 
         if (id == null || (player = accountService.getUserById(id)) == null) {
-            throw new AuthenticationException("Only authenticated users allowed to play a game");
-
+            throw new AuthenticationException("Only authenticated users allowed to play a game!");
         }
+
+        if (remotePointService.get(id) != null) {
+            LOGGER.error("You are already playing, go away!");
+            return;
+        }
+
+
         LOGGER.info("New player: {}", player.getLogin());
 
 
@@ -82,7 +88,8 @@ public class GameSocketHandler extends TextWebSocketHandler {
         final Long userId = (Long) session.getAttributes().get("userId");
         final UserProfile user;
         if (userId == null || (user = accountService.getUserById(userId)) == null) {
-            throw new AuthenticationException("Only authenticated users allowed to play a game");
+            LOGGER.error("Only authenticated users allowed to play a game!");
+            return;
         }
 
         final Message message = new Message(UserSnap.class.getName(), textMessage.getPayload());
@@ -111,14 +118,12 @@ public class GameSocketHandler extends TextWebSocketHandler {
         final Message message = new Message(Disconnect.Request.class, "{}");
         try {
                 messageHandlerContainer.handle(message, userId);
-                accountService.removeUser(userId);
         }
         catch (HandleException e) {
             LOGGER.error("Can't remove user from game");
         }
 
-
-        remotePointService.removeUser(webSocketSession);
+        remotePointService.removeUser(userId);
         LOGGER.info("User with ID={} has disconnected", userId);
     }
 

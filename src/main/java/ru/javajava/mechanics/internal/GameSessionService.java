@@ -74,6 +74,6 @@ public class GameSessionService {
         }
         usersMap.remove(user.getId());
         session.removePlayer(user);
-        LOGGER.info("Remove player from session");
+        LOGGER.info("Removing player from session");
     }
 }
