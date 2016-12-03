@@ -1,7 +1,9 @@
 package ru.javajava.mechanics;
 
+import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.mechanics.base.UserSnap;
@@ -14,6 +16,7 @@ import ru.javajava.websocket.Message;
 import ru.javajava.websocket.RemotePointService;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -38,13 +41,9 @@ public class GameMechanicsImpl implements GameMechanics {
         private Set<Long> playingUsers = new HashSet<>();
 
         private ConcurrentLinkedQueue<Long> waiters = new ConcurrentLinkedQueue<>();
+        private ConcurrentLinkedQueue<Long> deleted = new ConcurrentLinkedQueue<>();
 
         private final Queue<Runnable> tasks = new ConcurrentLinkedQueue<>();
-
-        private int rooms = 0;
-        GameSession mainSession;
-        private boolean needDeleteUser = false;
-        private long deletedUserId;
 
 
     public GameMechanicsImpl(AccountService accountService, ServerSnapService serverSnapshotService,
@@ -72,31 +71,12 @@ public class GameMechanicsImpl implements GameMechanics {
 
     @Override
     public void removeUser(long user) {
-        if (gameSessionService.isPlaying(user)) {
-            gameSessionService.removePlayer(mainSession, accountService.getUserById(user));
+        if (!gameSessionService.isPlaying(user)) {
+            return;
         }
-        needDeleteUser = true;
-        deletedUserId = user;
+        deleted.add(user);
     }
 
-    private void tryStartGames() {
-        final List<UserProfile> matchedPlayers = new LinkedList<>();
-
-        while (waiters.size() >= 2 || waiters.size() >= 1 && matchedPlayers.size() >= 1) {
-            final long candidate = waiters.poll();
-            if (!insureCandidate(candidate)) {
-                continue;
-            }
-            matchedPlayers.add(accountService.getUserById(candidate));
-            if(matchedPlayers.size() == 2) {
-                mainSession = gameSessionService.startGame(matchedPlayers);
-                matchedPlayers.clear();
-                rooms++;
-                LOGGER.info("Started game, total rooms: {}", rooms);
-            }
-        }
-        matchedPlayers.stream().map(UserProfile::getId).forEach(waiters::add);
-    }
 
     private boolean insureCandidate(long candidate) {
         return remotePointService.isConnected(candidate) &&
@@ -107,12 +87,10 @@ public class GameMechanicsImpl implements GameMechanics {
     public void gmStep(long frameTime) {
         while (!tasks.isEmpty()) {
             final Runnable nextTask = tasks.poll();
-            if (nextTask != null) {
-                try {
-                    nextTask.run();
-                } catch (RuntimeException ex) {
-                    LOGGER.error("Cant handle game task", ex);
-                }
+            try {
+                nextTask.run();
+            } catch (RuntimeException ex) {
+                LOGGER.error("Cant handle game task", ex);
             }
         }
 
@@ -128,41 +106,54 @@ public class GameMechanicsImpl implements GameMechanics {
             try {
                 serverSnapshotService.sendSnapshotsFor(session);
             } catch (RuntimeException ex) {
-                LOGGER.error("No snapshots, terminating the session", ex);
                 sessionsToTerminate.add(session);
-                rooms--;
-                mainSession = null;
+                LOGGER.error("Session was terminated!");
             }
+            sessionsToTerminate.forEach(gameSessionService::notifyGameIsOver);
+        }
 
-            // Удаление юзера
-            if (needDeleteUser) {
-                List<GameUser> players = session.getPlayers();
-                final Message message = new Message(Message.REMOVE_USER, String.valueOf(deletedUserId));
-                for (GameUser player: players) {
+
+        Map<GameSession, List<Long>> sessionLeftPlayers = new HashMap<>();
+        while (!deleted.isEmpty()) {
+            final long removedPlayer = deleted.poll();
+
+            final GameSession session = gameSessionService.getSessionForUser(removedPlayer);
+            gameSessionService.removePlayer(session, removedPlayer);     // Удаление игрока из сессии
+
+            if (sessionLeftPlayers.containsKey(session)) {
+                sessionLeftPlayers.get(session).add(removedPlayer);
+            }
+            else {
+                sessionLeftPlayers.put(session, new ArrayList<>());
+            }
+        }
+
+        // Отправка сведений о вышедших юзерах игрокам в каждой связанной сессии
+        if (!sessionLeftPlayers.isEmpty()) {
+            for (GameSession session : sessionLeftPlayers.keySet()) {
+                final List<Long> playersLeft = sessionLeftPlayers.get(session);
+                final JSONArray jsonArray = new JSONArray(playersLeft);
+                final Message message = new Message(Message.REMOVE_USER, jsonArray.toString());
+                for (GameUser user : session.getPlayers()) {
                     try {
-			            remotePointService.sendMessageToUser(player.getId(), message);
-                    }
-                    catch (IOException e) {
-                        LOGGER.error("Error sending info about removing user to player {}", player.getId());
+                        remotePointService.sendMessageToUser(user.getId(), message);
+                    } catch (IOException e) {
+                        LOGGER.error("Error sending info about removing user(-s) to user {}", user.getId());
                     }
                 }
-                needDeleteUser = false;
             }
         }
-        sessionsToTerminate.forEach(gameSessionService::notifyGameIsOver);
 
-        // Пока только одна комната
-        if (mainSession == null) {
-            tryStartGames();
-        }
-        else {
-            // Добавление к сущ. комнате
-            while (!waiters.isEmpty()) {
-                long playerId = waiters.poll();
-                UserProfile user = accountService.getUserById(playerId);
-                gameSessionService.addPlayer(mainSession, user);
+
+        while (!waiters.isEmpty()) {
+            final long candidate = waiters.poll();
+            if (!insureCandidate(candidate)) {
+                continue;
             }
+            final UserProfile newPlayer = accountService.getUserById(candidate);
+            gameSessionService.addNewPlayer(newPlayer);
         }
+
         clientSnapshotsService.clear();
     }
 

@@ -90,8 +90,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
         final Long userId = (Long) session.getAttributes().get("userId");
         final UserProfile user;
-        if (userId == null || (user = accountService.getUserById(userId)) == null) {
-            LOGGER.error("Only authenticated users allowed to play a game!");
+        if (userId == null || (user = accountService.getUserById(userId)) == null) {    // Неавторизованный юзер
             return;
         }
 
@@ -118,7 +117,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) throws Exception {
         final Long userId = (Long) webSocketSession.getAttributes().get("userId");
         if (userId == null) {
-            LOGGER.warn("User disconnected but his session was not found (closeStatus=" + closeStatus + ')');
+            LOGGER.warn("User has disconnected but his session was not found");
             return;
         }
 
@@ -131,7 +130,6 @@ public class GameSocketHandler extends TextWebSocketHandler {
         }
 
         remotePointService.removeUser(userId);
-        LOGGER.info("User with ID={} has disconnected", userId);
     }
 
     private void sendIdToClient(WebSocketSession session, long id) {

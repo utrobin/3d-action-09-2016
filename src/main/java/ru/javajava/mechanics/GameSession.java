@@ -15,6 +15,12 @@ public class GameSession {
     private final Long sessionId;
     private final List<GameUser> players = new ArrayList<>();
 
+   public static final int MAX_PLAYERS = 2;
+
+    public GameSession() {
+        this.sessionId = ID_GENERATOR.getAndIncrement();
+    }
+
     public GameSession(Iterable<UserProfile> players) {
         this.sessionId = ID_GENERATOR.getAndIncrement();
         for (UserProfile player: players) {
@@ -22,26 +28,36 @@ public class GameSession {
         }
     }
 
-    public GameUser getSelf(long userId) {
-        for (GameUser player: players) {
-            if (player.getId() == userId) {
-                return player;
-            }
-        }
-        return null;
+    public boolean isFull() {
+        return  players.size() == MAX_PLAYERS;
     }
 
-    public List<GameUser> getPlayers() {
-        return players;
+    public boolean isEmpty() {
+        return players.isEmpty();
     }
 
     public void addPlayer (UserProfile player) {
-        players.add(new GameUser(player));
+        if (players.size() < MAX_PLAYERS) {
+            players.add(new GameUser(player));
+        }
     }
 
     public void removePlayer (UserProfile player) {
         final GameUser gameUser = new GameUser(player);
         players.remove(gameUser);
+    }
+
+    public void removePlayer (long userId) {
+        for (GameUser player: players) {
+            if (player.getId() == userId) {
+                players.remove(player);
+                break;
+            }
+        }
+    }
+
+    public List<GameUser> getPlayers() {
+        return players;
     }
 
     @Override

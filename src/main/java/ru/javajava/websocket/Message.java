@@ -9,7 +9,7 @@ public class Message {
     @JsonProperty("type")
     private String type;
     @JsonProperty("data")
-    private String content;
+    private String data;
 
     public static final String INITIALIZE_USER = "InitializePlayer";
     public static final String SNAPSHOT = "Snapshot";
@@ -18,19 +18,19 @@ public class Message {
     public String getType() {
         return type;
     }
-    public String getContent() {
-        return content;
+    public String getData() {
+        return data;
     }
 
     public Message() {
     }
 
-    public Message(String type, String content) {
+    public Message(String type, String data) {
         this.type = type;
-        this.content = content;
+        this.data = data;
     }
 
-    public Message(Class clazz, String content) {
-        this(clazz.getName(), content);
+    public Message(Class clazz, String data) {
+        this(clazz.getName(), data);
     }
 }

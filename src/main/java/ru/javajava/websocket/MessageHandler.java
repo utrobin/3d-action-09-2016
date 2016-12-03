@@ -17,11 +17,11 @@ public abstract class MessageHandler<T> {
     @SuppressWarnings("OverlyBroadCatchBlock")
     public void handleMessage(Message message, Long forUser) throws HandleException {
         try {
-            final Object data = new ObjectMapper().readValue(message.getContent(), clazz);
+            final Object data = new ObjectMapper().readValue(message.getData(), clazz);
 
             handle(clazz.cast(data), forUser);
         } catch (IOException | ClassCastException ex) {
-            throw new HandleException("Can't read incoming message of type " + message.getType() + " with content: " + message.getContent(), ex);
+            throw new HandleException("Can't read incoming message of type " + message.getType() + " with content: " + message.getData(), ex);
         }
     }
 

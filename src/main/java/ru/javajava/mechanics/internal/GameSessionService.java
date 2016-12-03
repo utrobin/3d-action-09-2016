@@ -31,12 +31,45 @@ public class GameSessionService {
         return gameSessions;
     }
 
+
     public GameSession getSessionForUser(long userId) {
         return usersMap.get(userId);
     }
 
     public boolean isPlaying(long userId) {
         return usersMap.containsKey(userId);
+    }
+
+
+
+
+
+    public void addNewPlayer (UserProfile user) {
+        for (GameSession session: gameSessions) {
+            if (!session.isFull()) {
+                session.addPlayer(user);
+                usersMap.put(user.getId(), session);
+                LOGGER.info("Added player with ID={} to existing session", user.getId());
+                return;
+            }
+        }
+        final GameSession newSession = new GameSession();
+        newSession.addPlayer(user);
+        gameSessions.add(newSession);
+        usersMap.put(user.getId(), newSession);
+        LOGGER.info("Started new session, total rooms: {}", gameSessions.size());
+    }
+
+    public void removePlayer (GameSession session, long userId) {
+        if (!gameSessions.contains(session)) {
+            throw new RuntimeException("Game session not found");
+        }
+        usersMap.remove(userId);
+        session.removePlayer(userId);
+        LOGGER.info("Player with ID={} was removed", userId);
+        if (session.isEmpty()) {
+            notifyGameIsOver(session);  // Завершение текущей игры
+        }
     }
 
     public void notifyGameIsOver(GameSession gameSession) {
@@ -48,32 +81,6 @@ public class GameSessionService {
                 remotePointService.cutDownConnection(player.getId(), CloseStatus.SERVER_ERROR);
             }
         }
-    }
-
-    public GameSession startGame(List<UserProfile> players) {
-        final GameSession gameSession = new GameSession(players);
-        gameSessions.add(gameSession);
-        for (UserProfile player: players) {
-            usersMap.put(player.getId(), gameSession);
-        }
-        return gameSession;
-    }
-
-    public void addPlayer (GameSession session, UserProfile user) {
-        if (!gameSessions.contains(session)) {
-            throw new RuntimeException("Game session not found");
-        }
-        usersMap.put(user.getId(), session);
-        session.addPlayer(user);
-        LOGGER.info("Added player to session");
-    }
-
-    public void removePlayer (GameSession session, UserProfile user) {
-        if (!gameSessions.contains(session)) {
-            throw new RuntimeException("Game session not found");
-        }
-        usersMap.remove(user.getId());
-        session.removePlayer(user);
-        LOGGER.info("Removing player from session");
+        LOGGER.info("Game is over, total rooms: {}", gameSessions.size());
     }
 }

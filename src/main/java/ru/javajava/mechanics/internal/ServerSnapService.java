@@ -35,7 +35,7 @@ public class ServerSnapService {
         final ServerSnap snap = new ServerSnap();
 
         if (playersSnaps.isEmpty()) {
-            throw new RuntimeException("No snapshots for this session - aborting");
+            throw new RuntimeException("No players snaps");
         }
 
         snap.setPlayers(playersSnaps);
