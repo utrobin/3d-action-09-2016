@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Created by ivan on 14.11.16.
  */
+@SuppressWarnings("ALL")
 public class GameSocketHandler extends TextWebSocketHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GameSocketHandler.class.getName());
 
@@ -34,10 +35,6 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final AtomicLong ID_GENERATOR;
-    int userCount;
-
-
 
 
 
@@ -48,39 +45,31 @@ public class GameSocketHandler extends TextWebSocketHandler {
     //    this.pingService = pingService;
         this.accountService = accountService;
         this.remotePointService = remotePointService;
-        Random generator = new Random();
-        ID_GENERATOR = new AtomicLong(generator.nextInt());
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) throws AuthenticationException {
-        final long userNumber = ID_GENERATOR.getAndIncrement(); //(Long) webSocketSession.getAttributes().get("userId");
-//        if (id == null || accountService.getUserById(id) == null) {
-//            throw new AuthenticationException("Only authenticated users allowed to play a game")
+        final Long id = (Long) webSocketSession.getAttributes().get("userId");
 
-//        }
+        final UserProfile player;
 
+        if (id == null || (player = accountService.getUserById(id)) == null) {
+            throw new AuthenticationException("Only authenticated users allowed to play a game");
 
-
-        final UserProfile user;
-        try {
-            user = accountService.addUser("User #" + userNumber, "1", "park@mail.ru" + userNumber);
         }
-        catch (AlreadyExistsException e) {
-            LOGGER.error("User already exists!");
-            return;
-        }
-        LOGGER.info("Added User #{}", ++userCount);
-        remotePointService.registerUser(user.getId(), webSocketSession);
+        LOGGER.info("New player: {}", player.getLogin());
+
+
+        remotePointService.registerUser(player.getId(), webSocketSession);
         //pingService.refreshPing(userId);
 
-        sendIdToClient(webSocketSession, user.getId());
+        sendIdToClient(webSocketSession, player.getId());
 
 
         // Регистрация юзера в JoinGameHandler
         final Message message = new Message(JoinGame.Request.class, "{}");
         try {
-            messageHandlerContainer.handle(message, user.getId());
+            messageHandlerContainer.handle(message, player.getId());
         }
         catch (HandleException e) {
             LOGGER.error("Can't handle message while handshaking");
@@ -90,12 +79,12 @@ public class GameSocketHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage textMessage) throws AuthenticationException {
 
-//        final Long userId = (Long) session.getAttributes().get("userId");
-//        final UserProfile user;
-//        if (userId == null || (user = accountService.getUserById(userId)) == null) {
-//            throw new AuthenticationException("Only authenticated users allowed to play a game");
-//        }
-        Long userId = remotePointService.get(session);
+        final Long userId = (Long) session.getAttributes().get("userId");
+        final UserProfile user;
+        if (userId == null || (user = accountService.getUserById(userId)) == null) {
+            throw new AuthenticationException("Only authenticated users allowed to play a game");
+        }
+
         final Message message = new Message(UserSnap.class.getName(), textMessage.getPayload());
         try {
             messageHandlerContainer.handle(message, userId);
@@ -113,31 +102,24 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) throws Exception {
-//        final Long userId = (Long) webSocketSession.getAttributes().get("userId");
-//        if (userId == null) {
-//            LOGGER.warn("User disconnected but his session was not found (closeStatus=" + closeStatus + ')');
-//            return;
-//        }
+        final Long userId = (Long) webSocketSession.getAttributes().get("userId");
+        if (userId == null) {
+            LOGGER.warn("User disconnected but his session was not found (closeStatus=" + closeStatus + ')');
+            return;
+        }
 
-        Long userId = remotePointService.get(webSocketSession);
         final Message message = new Message(Disconnect.Request.class, "{}");
         try {
-            if (userId != null) {
                 messageHandlerContainer.handle(message, userId);
                 accountService.removeUser(userId);
-            }
         }
         catch (HandleException e) {
             LOGGER.error("Can't remove user from game");
         }
 
 
-
-
-
-        LOGGER.info("User has disconnected");
         remotePointService.removeUser(webSocketSession);
-        userCount--;
+        LOGGER.info("User with ID={} has disconnected", userId);
     }
 
     private void sendIdToClient(WebSocketSession session, long id) {
