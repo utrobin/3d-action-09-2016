@@ -66,7 +66,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
         }
 
 
-        LOGGER.info("New player: {} with ID = {}", player.getLogin(), player.getId());
+        LOGGER.info("New player: {} with ID={}", player.getLogin(), player.getId());
 
 
         remotePointService.registerUser(player.getId(), webSocketSession);
@@ -97,6 +97,8 @@ public class GameSocketHandler extends TextWebSocketHandler {
         }
 
         final JSONObject sourceJson = new JSONObject(textMessage.getPayload());
+        LOGGER.info(sourceJson.getString("type"));
+        LOGGER.info(sourceJson.getString("data"));
         final Message message = new Message(sourceJson.getString("type"), sourceJson.getString("data"));
 
         try {
