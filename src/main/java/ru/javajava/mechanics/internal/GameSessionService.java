@@ -55,7 +55,7 @@ public class GameSessionService {
         newSession.addPlayer(user);
         gameSessions.add(newSession);
         usersMap.put(user.getId(), newSession);
-        LOGGER.info("Started new session, total rooms: {}", gameSessions.size());
+        LOGGER.info("Started new session #{}, total rooms: {}", newSession.getId(), gameSessions.size());
     }
 
     public void removePlayer (GameSession session, long userId) {

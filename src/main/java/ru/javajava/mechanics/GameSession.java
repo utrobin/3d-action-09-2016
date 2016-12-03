@@ -31,9 +31,10 @@ public class GameSession {
     }
 
     public void addPlayer (UserProfile player) {
-        if (players.size() < MAX_PLAYERS) {
-            players.add(new GameUser(player));
+        if (players.size() >= MAX_PLAYERS) {
+            throw new RuntimeException("No more players for this session!");
         }
+        players.add(new GameUser(player));
     }
 
     public void removePlayer (UserProfile player) {

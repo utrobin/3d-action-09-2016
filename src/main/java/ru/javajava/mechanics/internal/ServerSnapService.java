@@ -1,6 +1,8 @@
 package ru.javajava.mechanics.internal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;
@@ -19,6 +21,7 @@ import java.util.List;
  */
 @Service
 public class ServerSnapService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerSnapService.class);
     private final RemotePointService remotePointService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -41,6 +44,7 @@ public class ServerSnapService {
         snap.setPlayers(playersSnaps);
         try {
             final Message message = new Message(Message.SNAPSHOT, objectMapper.writeValueAsString(snap));
+            LOGGER.info("Snap with {} players: {}", players.size(), message.getData());
             for (GameUser player : players) {
                 remotePointService.sendMessageToUser(player.getId(), message);
             }

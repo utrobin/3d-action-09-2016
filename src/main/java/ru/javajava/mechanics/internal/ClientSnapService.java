@@ -34,31 +34,8 @@ public class ClientSnapService {
                 continue;
             }
             player.setCoords(playerSnap.getCoords());
-//            for (ClientSnap snap : playerSnaps) {
-//                processMovement(player, snap.getDirection(), snap.getFrameTime());
-//            }
-//            final ClientSnap lastSnap = playerSnaps.get(playerSnaps.size() - 1);
-//            processMouseMove(player, lastSnap.getMouse());
-
-            //TODO:Firing
         }
     }
-
-
-//
-//    private void moveSquareBy(@NotNull Square square, double dx, double dy) {
-//        final PositionPart positionPart = square.claimPart(PositionPart.class);
-//        final Coords lastDesirablePoint = positionPart.getLastDesirablePoint();
-//        final double newX = Math.min(Config.PLAYGROUND_WIDTH - Config.SQUARE_SIZE, lastDesirablePoint.x + dx);
-//        final double newY = Math.min(Config.PLAYGROUND_HEIGHT - Config.SQUARE_SIZE, lastDesirablePoint.y + dy);
-//        positionPart.addDesirableCoords(new Coords(newX, newY));
-//        movementService.registerObjectToMove(square);
-//    }
-//
-//    private void processMouseMove(@NotNull GameUser gameUser, @NotNull Coords mouse) {
-//        gameUser.getSquare().claimPart(MousePart.class).setMouse(mouse);
-//    }
-
 
     public void clear() {
         userToSnap.clear();

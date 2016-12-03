@@ -61,7 +61,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
         }
 
 
-        LOGGER.info("New player: {} with ID={}", player.getLogin(), player.getId());
+        LOGGER.info("New player {} #{}", player.getLogin(), player.getId());
 
 
         remotePointService.registerUser(player.getId(), webSocketSession);
