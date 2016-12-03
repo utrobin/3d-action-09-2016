@@ -47,7 +47,8 @@ public class GameSessionService {
             if (!session.isFull()) {
                 session.addPlayer(user);
                 usersMap.put(user.getId(), session);
-                LOGGER.info("Added player #{} to session #{}", user.getId(), session.getId());
+                LOGGER.info("--------------------------------------------------------");
+                LOGGER.info("Added player #{} to room #{}", user.getId(), session.getId());
                 return;
             }
         }
@@ -55,6 +56,7 @@ public class GameSessionService {
         newSession.addPlayer(user);
         gameSessions.add(newSession);
         usersMap.put(user.getId(), newSession);
+        LOGGER.info("--------------------------------------------------------");
         LOGGER.info("Started new session #{}, total rooms: {}", newSession.getId(), gameSessions.size());
     }
 
@@ -64,7 +66,8 @@ public class GameSessionService {
         }
         usersMap.remove(userId);
         session.removePlayer(userId);
-        LOGGER.info("Player #{} was removed from session #{}", userId, session.getId());
+        LOGGER.info("--------------------------------------------------------");
+        LOGGER.info("Player #{} was removed from room #{}", userId, session.getId());
         if (session.isEmpty()) {
             notifyGameIsOver(session);  // Завершение текущей игры
         }
@@ -79,6 +82,7 @@ public class GameSessionService {
                 remotePointService.cutDownConnection(player.getId(), CloseStatus.SERVER_ERROR);
             }
         }
+        LOGGER.info("--------------------------------------------------------");
         LOGGER.info("Game is over, total rooms: {}", gameSessions.size());
     }
 }

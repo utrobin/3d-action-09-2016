@@ -15,7 +15,8 @@ public class GameSession {
     private final Long sessionId;
     private final List<GameUser> players = new ArrayList<>();
 
-   public static final int MAX_PLAYERS = 2;
+    // Максимальное значение игроков в одной комнате
+    public static final int MAX_PLAYERS = 16;
 
     public GameSession() {
         this.sessionId = ID_GENERATOR.getAndIncrement();
