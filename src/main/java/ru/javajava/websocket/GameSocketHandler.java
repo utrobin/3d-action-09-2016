@@ -96,7 +96,6 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
         final JSONObject sourceJson = new JSONObject(textMessage.getPayload());
         JSONObject data = sourceJson.getJSONObject("data");
-        LOGGER.info(data.toString());
         final Message message = new Message(sourceJson.getString("type"), data.toString());
 
         try {
@@ -121,15 +120,16 @@ public class GameSocketHandler extends TextWebSocketHandler {
             return;
         }
 
-        final Message message = new Message(Disconnect.Request.class, "{}");
-        try {
-                messageHandlerContainer.handle(message, userId);
-        }
-        catch (HandleException e) {
-            LOGGER.error("Can't remove user from game");
-        }
+        if (remotePointService.contains(webSocketSession)) {
+            remotePointService.removeUser(userId);
 
-        remotePointService.removeUser(userId);
+            final Message message = new Message(Disconnect.Request.class, "{}");
+            try {
+                messageHandlerContainer.handle(message, userId);
+            } catch (HandleException e) {
+                LOGGER.error("Can't remove user from game");
+            }
+        }
     }
 
     private void sendIdToClient(WebSocketSession session, long id) {

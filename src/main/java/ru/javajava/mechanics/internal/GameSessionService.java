@@ -42,14 +42,12 @@ public class GameSessionService {
 
 
 
-
-
     public void addNewPlayer (UserProfile user) {
         for (GameSession session: gameSessions) {
             if (!session.isFull()) {
                 session.addPlayer(user);
                 usersMap.put(user.getId(), session);
-                LOGGER.info("Added player with ID={} to existing session", user.getId());
+                LOGGER.info("Added player #{} to session #{}", user.getId(), session.getId());
                 return;
             }
         }
@@ -66,7 +64,7 @@ public class GameSessionService {
         }
         usersMap.remove(userId);
         session.removePlayer(userId);
-        LOGGER.info("Player with ID={} was removed", userId);
+        LOGGER.info("Player #{} was removed", userId);
         if (session.isEmpty()) {
             notifyGameIsOver(session);  // Завершение текущей игры
         }

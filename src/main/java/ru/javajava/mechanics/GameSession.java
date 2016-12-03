@@ -21,12 +21,6 @@ public class GameSession {
         this.sessionId = ID_GENERATOR.getAndIncrement();
     }
 
-    public GameSession(Iterable<UserProfile> players) {
-        this.sessionId = ID_GENERATOR.getAndIncrement();
-        for (UserProfile player: players) {
-            this.players.add(new GameUser(player));
-        }
-    }
 
     public boolean isFull() {
         return  players.size() == MAX_PLAYERS;
@@ -58,6 +52,10 @@ public class GameSession {
 
     public List<GameUser> getPlayers() {
         return players;
+    }
+
+    public Long getId() {
+        return sessionId;
     }
 
     @Override

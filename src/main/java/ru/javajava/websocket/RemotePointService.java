@@ -30,9 +30,9 @@ public class RemotePointService {
         return sessions.containsKey(userId) && sessions.get(userId).isOpen();
     }
 
-    public void removeUser(Long userId)
+    public WebSocketSession removeUser(Long userId)
     {
-        sessions.remove(userId);
+        return sessions.remove(userId);
     }
 
 
@@ -64,5 +64,9 @@ public class RemotePointService {
 
     public WebSocketSession get (long userId) {
         return sessions.get(userId);
+    }
+
+    public boolean contains (WebSocketSession session) {
+        return sessions.containsValue(session);
     }
 }
