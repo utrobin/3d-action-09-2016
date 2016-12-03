@@ -8,17 +8,12 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import ru.javajava.exceptions.AlreadyExistsException;
-import ru.javajava.mechanics.base.UserSnap;
 import ru.javajava.mechanics.requests.Disconnect;
 import ru.javajava.mechanics.requests.JoinGame;
 import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountService;
 
 import javax.naming.AuthenticationException;
-import java.io.IOException;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by ivan on 14.11.16.

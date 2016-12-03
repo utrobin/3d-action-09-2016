@@ -3,7 +3,6 @@ package ru.javajava.mechanics;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.mechanics.base.UserSnap;
@@ -16,7 +15,6 @@ import ru.javajava.websocket.Message;
 import ru.javajava.websocket.RemotePointService;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -113,7 +111,7 @@ public class GameMechanicsImpl implements GameMechanics {
         }
 
 
-        Map<GameSession, List<Long>> sessionLeftPlayers = new HashMap<>();
+        final Map<GameSession, List<Long>> sessionLeftPlayers = new HashMap<>();
         while (!deleted.isEmpty()) {
             final long removedPlayer = deleted.poll();
 
@@ -124,7 +122,9 @@ public class GameMechanicsImpl implements GameMechanics {
                 sessionLeftPlayers.get(session).add(removedPlayer);
             }
             else {
-                sessionLeftPlayers.put(session, new ArrayList<>());
+                final List<Long> removedPlayers = new ArrayList<>();
+                removedPlayers.add(removedPlayer);
+                sessionLeftPlayers.put(session, removedPlayers);
             }
         }
 

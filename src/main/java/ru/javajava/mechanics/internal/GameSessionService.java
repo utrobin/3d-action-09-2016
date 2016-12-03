@@ -64,7 +64,7 @@ public class GameSessionService {
         }
         usersMap.remove(userId);
         session.removePlayer(userId);
-        LOGGER.info("Player #{} was removed", userId);
+        LOGGER.info("Player #{} was removed from session #{}", userId, session.getId());
         if (session.isEmpty()) {
             notifyGameIsOver(session);  // Завершение текущей игры
         }

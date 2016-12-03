@@ -4,8 +4,6 @@ import ru.javajava.DAO.UserDAO;
 import ru.javajava.exceptions.AlreadyExistsException;
 import ru.javajava.model.UserProfile;
 
-import java.util.List;
-
 /**
  * Created by ivan on 05.10.16.
  */
