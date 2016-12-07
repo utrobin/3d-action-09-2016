@@ -10,6 +10,8 @@ import ru.javajava.model.UserProfile;
 public class GameUser {
     private final UserProfile userProfile;
     private Coords position;
+    private int hp = 100;
+    public static final int SHOT_REDUCING = 35;
 
     public GameUser(UserProfile userProfile) {
         this.userProfile = userProfile;
@@ -36,6 +38,22 @@ public class GameUser {
         result.setUserId(getId());
         result.setPosition(position);
         return result;
+    }
+
+    public boolean isAlive() {
+        return hp > 0;
+    }
+
+    public void setHp(byte hp) {
+        this.hp = hp;
+    }
+
+    public void markShot() {
+        hp -= SHOT_REDUCING;
+    }
+
+    public void markСomplHealthy() {
+        hp = 100;
     }
 
     @Override

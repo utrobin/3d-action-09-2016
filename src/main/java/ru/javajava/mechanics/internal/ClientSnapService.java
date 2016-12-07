@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.mechanics.base.CameraDirection;
+import ru.javajava.mechanics.base.MyVector;
 import ru.javajava.mechanics.base.UserSnap;
 import ru.javajava.mechanics.base.Coords;
 
@@ -47,8 +48,12 @@ public class ClientSnapService {
                 if (!snap.isFiring()) {
                     continue;
                 }
-                CameraDirection cameraDirection = snap.getCamera();
-                processFiring (snap, players);
+
+                final GameUser murdered = processFiring (snap, players);
+                if (murdered != null) { // Если игрок в кого-то попал
+                    LOGGER.info("---------------------");
+                    LOGGER.info("{} was shot by ID={}!", murdered.getUserProfile().getLogin(), snap.getId());
+                }
             }
         }
     }
@@ -61,11 +66,10 @@ public class ClientSnapService {
         double horizAngle = cameraDirection.getHorizontalAngle();
         final double verticAngle = cameraDirection.getVerticalAngle();
         horizAngle = horizAngle % Math.PI;
+                                                                    // Вектор текущего выстрела
+        final MyVector currentShot = new MyVector(Math.sin(horizAngle), Math.sin(verticAngle), Math.cos(horizAngle));
 
-        final Coords currentShot = new Coords(Math.sin(horizAngle), Math.sin(verticAngle), Math.cos(horizAngle));
 
-
-        // Debug
         for (GameUser player: players) {
             if (player.getId() == snap.getId()) {
                 continue; // Это ты и есть
@@ -75,28 +79,16 @@ public class ClientSnapService {
                 continue;
             }
 
+            final MyVector idealShot = new MyVector(enemyCoords.subtract(position));    // Вектор идеального выстрела в центр врага
 
-            final Coords idealShot = enemyCoords.subtract(position);
-            double x = (double) Math.round(idealShot.x * 100) / 100;
-            double y = (double) Math.round(idealShot.y * 100) / 100;
-            double z = (double) Math.round(idealShot.z * 100) / 100;
-
-
-
-
-            final double distance = enemyCoords.getDistanceBetween(position);
+            final double distance = enemyCoords.getDistanceBetween(position);   // Расстояние до врага
             final double hypotenuse = Math.sqrt(distance*distance + RADIUS*RADIUS);
-            final double maxCos = distance / hypotenuse;   // Косинус МАКСИМАЛЬНО возможного угла
+            final double maxCos = distance / hypotenuse;   // Косинус МАКСИМАЛЬНО возможного угла между идеальным вектором и существующим
 
-            final double cos = getCos(idealShot, currentShot);
-
-            if (cos >= maxCos) {    // Если угол между векторами МЕНЬШЕ максимально возможного
-                LOGGER.info("SHOOTED!");
+            final double cos = currentShot.getCos(idealShot);
+            if (cos >= maxCos) {
+                return player;      // Игрок попал
             }
-            else {
-                LOGGER.info("missed");
-            }
-
         }
 
         return null;
@@ -114,18 +106,7 @@ public class ClientSnapService {
     }
 
 
-    private double getCos (Coords vec1, Coords vec2) {
-        return getScalarMultipl(vec1, vec2) / (getModule(vec1) * getModule(vec2));
-    }
 
-    private double getScalarMultipl (Coords first, Coords second) {
-        return first.x * second.x + first.y * second.y + first.z * second.z;
-    }
-
-    private double getModule (Coords vec) {
-        final double sum = vec.x * vec.x + vec.y * vec.y + vec.z * vec.z;
-        return Math.sqrt(sum);
-    }
 
 
 

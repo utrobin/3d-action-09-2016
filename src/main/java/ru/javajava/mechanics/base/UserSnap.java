@@ -18,6 +18,8 @@ public class UserSnap {
     @JsonProperty("firing")
     private boolean firing;
 
+
+
     public long getId() {
         return id;
     }
