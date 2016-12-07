@@ -55,6 +55,9 @@ public class ClientSnapService {
                     LOGGER.info("--------------------------------------------------------");
                     LOGGER.info("{} was shot by {}!", murdered.getUserProfile().getLogin(), player.getUserProfile().getLogin());
                 }
+                else {
+                    LOGGER.info("Missed");
+                }
             }
         }
     }
@@ -67,7 +70,7 @@ public class ClientSnapService {
         final double horizAngle = cameraDirection.getHorizontalAngle();
         final double verticAngle = cameraDirection.getVerticalAngle();
                                                                     // Вектор текущего выстрела
-        final MyVector currentShot = new MyVector(Math.sin(horizAngle), Math.sin(verticAngle), Math.cos(horizAngle));
+        final MyVector currentShot = new MyVector(-Math.sin(horizAngle), Math.sin(verticAngle), -Math.cos(horizAngle));
 
 
         for (GameUser player: players) {
@@ -85,7 +88,11 @@ public class ClientSnapService {
             final double hypotenuse = Math.sqrt(distance*distance + RADIUS*RADIUS);
             final double maxCos = distance / hypotenuse;   // Косинус МАКСИМАЛЬНО возможного угла между идеальным вектором и существующим
 
+
             final double cos = currentShot.getCos(idealShot);
+            LOGGER.info("Ideal shot: ({}, {}, {})", idealShot.getX(), idealShot.getY(), idealShot.getZ());
+            LOGGER.info("My shot: ({}, {}, {})", currentShot.getX(), currentShot.getY(), currentShot.getZ());
+            LOGGER.info("MaxCos = {}, cos = {}", maxCos, cos);
             if (cos >= maxCos) {
                 return player;      // Игрок попал
             }
