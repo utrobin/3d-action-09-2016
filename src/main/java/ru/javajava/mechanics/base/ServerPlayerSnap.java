@@ -11,6 +11,8 @@ public class ServerPlayerSnap {
     private long userId;
     @JsonProperty("position")
     private Coords position;
+    @JsonProperty("hp")
+    private int hp;
 
     public Coords getPosition() {
         return position;
@@ -26,5 +28,13 @@ public class ServerPlayerSnap {
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
     }
 }

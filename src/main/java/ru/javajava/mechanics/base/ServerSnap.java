@@ -9,10 +9,6 @@ public class ServerSnap {
 
     List<ServerPlayerSnap> players;
 
-    public List<ServerPlayerSnap> getPlayers() {
-        return players;
-    }
-
     public void setPlayers(List<ServerPlayerSnap> players) {
         this.players = players;
     }

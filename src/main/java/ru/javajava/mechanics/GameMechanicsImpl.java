@@ -97,6 +97,7 @@ public class GameMechanicsImpl implements GameMechanics {
         }
 
 
+        // Отправка снапшотов
         final Iterator<GameSession> iterator = gameSessionService.getSessions().iterator();
         final Collection<GameSession> sessionsToTerminate = new ArrayList<>();
         while (iterator.hasNext()) {

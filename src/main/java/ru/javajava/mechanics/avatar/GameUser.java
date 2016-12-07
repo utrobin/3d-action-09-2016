@@ -37,6 +37,7 @@ public class GameUser {
         final ServerPlayerSnap result = new ServerPlayerSnap();
         result.setUserId(getId());
         result.setPosition(position);
+        result.setHp(hp);
         return result;
     }
 
@@ -50,6 +51,9 @@ public class GameUser {
 
     public void markShot() {
         hp -= SHOT_REDUCING;
+        if (hp < 0) {
+            hp = 0;
+        }
     }
 
     public void markСomplHealthy() {

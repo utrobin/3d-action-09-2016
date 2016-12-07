@@ -51,8 +51,9 @@ public class ClientSnapService {
 
                 final GameUser murdered = processFiring (snap, players);
                 if (murdered != null) { // Если игрок в кого-то попал
+                    murdered.markShot();
                     LOGGER.info("---------------------");
-                    LOGGER.info("{} was shot by ID={}!", murdered.getUserProfile().getLogin(), snap.getId());
+                    LOGGER.info("{} was shot by {}!", murdered.getUserProfile().getLogin(), player.getUserProfile().getLogin());
                 }
             }
         }
@@ -63,9 +64,8 @@ public class ClientSnapService {
     private GameUser processFiring(UserSnap snap, Iterable<GameUser> players) {
         final Coords position = snap.getPosition();
         final CameraDirection cameraDirection  = snap.getCamera();
-        double horizAngle = cameraDirection.getHorizontalAngle();
+        final double horizAngle = cameraDirection.getHorizontalAngle();
         final double verticAngle = cameraDirection.getVerticalAngle();
-        horizAngle = horizAngle % Math.PI;
                                                                     // Вектор текущего выстрела
         final MyVector currentShot = new MyVector(Math.sin(horizAngle), Math.sin(verticAngle), Math.cos(horizAngle));
 

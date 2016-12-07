@@ -18,8 +18,6 @@ public class UserSnap {
     @JsonProperty("firing")
     private boolean firing;
 
-
-
     public long getId() {
         return id;
     }
@@ -51,4 +49,5 @@ public class UserSnap {
     public void setFiring(boolean firing) {
         this.firing = firing;
     }
+
 }
