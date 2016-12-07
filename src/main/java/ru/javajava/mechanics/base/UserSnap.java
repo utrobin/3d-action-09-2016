@@ -10,7 +10,13 @@ public class UserSnap {
     @JsonProperty("id")
     private long id;
     @JsonProperty("position")
-    private Coords coords;
+    private Coords position;
+
+    @JsonProperty("camera")
+    private CameraDirection camera;
+
+    @JsonProperty("firing")
+    private boolean firing;
 
     public long getId() {
         return id;
@@ -20,11 +26,27 @@ public class UserSnap {
         this.id = id;
     }
 
-    public Coords getCoords() {
-        return coords;
+    public Coords getPosition() {
+        return position;
     }
 
-    public void setCoords(Coords coords) {
-        this.coords = coords;
+    public void setPosition(Coords position) {
+        this.position = position;
+    }
+
+    public CameraDirection getCamera() {
+        return camera;
+    }
+
+    public void setCamera(CameraDirection camera) {
+        this.camera = camera;
+    }
+
+    public boolean isFiring() {
+        return firing;
+    }
+
+    public void setFiring(boolean firing) {
+        this.firing = firing;
     }
 }

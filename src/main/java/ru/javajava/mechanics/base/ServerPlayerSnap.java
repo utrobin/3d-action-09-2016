@@ -10,14 +10,14 @@ public class ServerPlayerSnap {
     @JsonProperty("id")
     private long userId;
     @JsonProperty("position")
-    private Coords playerCoords;
+    private Coords position;
 
-    public Coords getPlayerCoords() {
-        return playerCoords;
+    public Coords getPosition() {
+        return position;
     }
 
-    public void setPlayerCoords(Coords playerCoords) {
-        this.playerCoords = playerCoords;
+    public void setPosition(Coords position) {
+        this.position = position;
     }
 
     public long getUserId() {

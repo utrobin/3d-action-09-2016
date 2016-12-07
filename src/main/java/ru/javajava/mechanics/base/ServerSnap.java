@@ -9,7 +9,6 @@ public class ServerSnap {
 
     List<ServerPlayerSnap> players;
 
-
     public List<ServerPlayerSnap> getPlayers() {
         return players;
     }

@@ -9,33 +9,23 @@ import ru.javajava.model.UserProfile;
  */
 public class GameUser {
     private final UserProfile userProfile;
-   // private final TimingPart timingPart;
-    private final Sphere sphere;
-
-    //TODO: Collider
-
+    private Coords position;
 
     public GameUser(UserProfile userProfile) {
         this.userProfile = userProfile;
-        sphere = new Sphere();
-   //     this.timingPart = new TimingPart();
     }
-
-
 
     public UserProfile getUserProfile() {
         return userProfile;
     }
 
-    public void setCoords (Coords coords) {
-        this.sphere.setCoords(coords);
+    public void setPosition(Coords coords) {
+        this.position = coords;
     }
 
-    public Coords getCoords () {
-        return sphere.getCoords();
+    public Coords getPosition() {
+        return position;
     }
-
-
 
     public long getId() {
         return userProfile.getId();
@@ -44,7 +34,7 @@ public class GameUser {
     public ServerPlayerSnap generateSnap() {
         final ServerPlayerSnap result = new ServerPlayerSnap();
         result.setUserId(getId());
-        result.setPlayerCoords(sphere.getCoords());
+        result.setPosition(position);
         return result;
     }
 
@@ -59,7 +49,8 @@ public class GameUser {
 
     @Override
     public int hashCode() {
-        return (int)this.getId();
+        final long id = userProfile.getId();
+        return (int) (id ^ (id >>> 32));
     }
 }
 

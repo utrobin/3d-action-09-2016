@@ -61,6 +61,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
         }
 
 
+        LOGGER.info("--------------------------------------------------------");
         LOGGER.info("New player {} #{}", player.getLogin(), player.getId());
 
 
