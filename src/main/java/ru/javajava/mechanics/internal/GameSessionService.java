@@ -48,7 +48,7 @@ public class GameSessionService {
                 session.addPlayer(user);
                 usersMap.put(user.getId(), session);
                 LOGGER.info("--------------------------------------------------------");
-                LOGGER.info("Added player #{} to room #{}", user.getId(), session.getId());
+                LOGGER.info("Added player #{} to room #{} (players here: {})", user.getId(), session.getId(), session.getPlayers().size());
                 return;
             }
         }
@@ -57,7 +57,7 @@ public class GameSessionService {
         gameSessions.add(newSession);
         usersMap.put(user.getId(), newSession);
         LOGGER.info("--------------------------------------------------------");
-        LOGGER.info("Started new session #{}, total rooms: {}", newSession.getId(), gameSessions.size());
+        LOGGER.info("Started new room #{}, total rooms: {}", newSession.getId(), gameSessions.size());
     }
 
     public void removePlayer (GameSession session, long userId) {
@@ -67,7 +67,7 @@ public class GameSessionService {
         usersMap.remove(userId);
         session.removePlayer(userId);
         LOGGER.info("--------------------------------------------------------");
-        LOGGER.info("Player #{} was removed from room #{}", userId, session.getId());
+        LOGGER.info("Player #{} was removed from room #{} (players here: {})", userId, session.getId(), session.getPlayers().size());
         if (session.isEmpty()) {
             notifyGameIsOver(session);  // Завершение текущей игры
         }
@@ -83,6 +83,6 @@ public class GameSessionService {
             }
         }
         LOGGER.info("--------------------------------------------------------");
-        LOGGER.info("Game is over, total rooms: {}", gameSessions.size());
+        LOGGER.info("Game #{} is over, total rooms: {}", gameSession.getId(), gameSessions.size());
     }
 }

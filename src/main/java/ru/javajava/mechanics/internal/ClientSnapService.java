@@ -52,7 +52,7 @@ public class ClientSnapService {
                 final GameUser murdered = processFiring (snap, players);
                 if (murdered != null) { // Если игрок в кого-то попал
                     murdered.markShot();
-                    LOGGER.info("---------------------");
+                    LOGGER.info("--------------------------------------------------------");
                     LOGGER.info("{} was shot by {}!", murdered.getUserProfile().getLogin(), player.getUserProfile().getLogin());
                 }
             }

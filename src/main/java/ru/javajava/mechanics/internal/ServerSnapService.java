@@ -21,6 +21,7 @@ import java.util.List;
  */
 @Service
 public class ServerSnapService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerSnapService.class);
     private final RemotePointService remotePointService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -47,6 +48,7 @@ public class ServerSnapService {
                 remotePointService.sendMessageToUser(player.getId(), message);
             }
         } catch (IOException e) {
+            LOGGER.error("Can not serialize server snap! {}", e.getMessage());
         }
 
     }

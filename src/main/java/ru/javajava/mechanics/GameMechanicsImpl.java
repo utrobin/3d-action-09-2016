@@ -146,6 +146,7 @@ public class GameMechanicsImpl implements GameMechanics {
         }
 
 
+        // Добавление новых игроков в игру
         while (!waiters.isEmpty()) {
             final long candidate = waiters.poll();
             if (!insureCandidate(candidate)) {
