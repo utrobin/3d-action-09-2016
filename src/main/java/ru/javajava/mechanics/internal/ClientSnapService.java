@@ -85,16 +85,16 @@ public class ClientSnapService {
 
 
             final double distance = enemyCoords.getDistanceBetween(position);
-            final double maxSin = RADIUS / distance;   // Синус МАКСИМАЛЬНО возможного угла
+            final double hypotenuse = Math.sqrt(distance*distance + RADIUS*RADIUS);
+            final double maxCos = distance / hypotenuse;   // Косинус МАКСИМАЛЬНО возможного угла
 
             final double cos = getCos(idealShot, currentShot);
-            final double sin = Math.sqrt(1 - cos*cos);
-            LOGGER.info("MaxSin: {}, sin: {})", maxSin, sin);
-            if (sin < maxSin) {
+
+            if (cos >= maxCos) {    // Если угол между векторами МЕНЬШЕ максимально возможного
                 LOGGER.info("SHOOTED!");
             }
             else {
-                LOGGER.info("miss");
+                LOGGER.info("missed");
             }
 
         }
