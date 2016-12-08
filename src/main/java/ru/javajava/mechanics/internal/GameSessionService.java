@@ -60,6 +60,7 @@ public class GameSessionService {
         LOGGER.info("Started new room #{}, total rooms: {}", newSession.getId(), gameSessions.size());
     }
 
+
     public void removePlayer (GameSession session, long userId) {
         if (!gameSessions.contains(session)) {
             throw new RuntimeException("Game session not found");
@@ -75,7 +76,7 @@ public class GameSessionService {
 
     public void notifyGameIsOver(GameSession gameSession) {
         final boolean exists = gameSessions.remove(gameSession);
-        final List<GameUser> players = gameSession.getPlayers();
+        final Set<GameUser> players = gameSession.getPlayers();
         for (GameUser player: players) {
             usersMap.remove(player.getId());
             if (exists) {

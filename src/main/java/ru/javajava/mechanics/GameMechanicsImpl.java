@@ -112,38 +112,8 @@ public class GameMechanicsImpl implements GameMechanics {
         }
 
 
-        final Map<GameSession, List<Long>> sessionLeftPlayers = new HashMap<>();
-        while (!deleted.isEmpty()) {
-            final long removedPlayer = deleted.poll();
-
-            final GameSession session = gameSessionService.getSessionForUser(removedPlayer);
-            gameSessionService.removePlayer(session, removedPlayer);     // Удаление игрока из сессии
-
-            if (sessionLeftPlayers.containsKey(session)) {
-                sessionLeftPlayers.get(session).add(removedPlayer);
-            }
-            else {
-                final List<Long> removedPlayers = new ArrayList<>();
-                removedPlayers.add(removedPlayer);
-                sessionLeftPlayers.put(session, removedPlayers);
-            }
-        }
-
-        // Отправка сведений о вышедших юзерах игрокам в каждой связанной сессии
-        if (!sessionLeftPlayers.isEmpty()) {
-            for (GameSession session : sessionLeftPlayers.keySet()) {
-                final List<Long> playersLeft = sessionLeftPlayers.get(session);
-                final JSONArray jsonArray = new JSONArray(playersLeft);
-                final Message message = new Message(Message.REMOVE_USER, jsonArray.toString());
-                for (GameUser user : session.getPlayers()) {
-                    try {
-                        remotePointService.sendMessageToUser(user.getId(), message);
-                    } catch (IOException e) {
-                        LOGGER.error("Error sending info about removing user(-s) to user {}", user.getId());
-                    }
-                }
-            }
-        }
+        // Удаление вышедших пользователей
+        removeLeftUsers();
 
 
         // Добавление новых игроков в игру
@@ -157,6 +127,34 @@ public class GameMechanicsImpl implements GameMechanics {
         }
 
         clientSnapshotsService.clear();
+    }
+
+    private void removeLeftUsers() {
+        final Map<GameSession, List<Long>> sessionLeftPlayers = new HashMap<>();
+        while (!deleted.isEmpty()) {
+            final long removedPlayer = deleted.poll();
+
+            final GameSession session = gameSessionService.getSessionForUser(removedPlayer);
+            gameSessionService.removePlayer(session, removedPlayer);     // Удаление игрока из сессии
+
+            sessionLeftPlayers.putIfAbsent(session, new ArrayList<>());
+            final List<Long> leftUsers = sessionLeftPlayers.get(session);
+            leftUsers.add(removedPlayer);
+        }
+
+        // Отправка сведений о вышедших юзерах игрокам в каждой связанной сессии
+        for (GameSession session : sessionLeftPlayers.keySet()) {
+            final List<Long> playersLeft = sessionLeftPlayers.get(session);
+            final JSONArray jsonArray = new JSONArray(playersLeft);
+            final Message message = new Message(Message.REMOVE_USER, jsonArray.toString());
+            for (GameUser user : session.getPlayers()) {
+                try {
+                    remotePointService.sendMessageToUser(user.getId(), message);
+                } catch (IOException e) {
+                    LOGGER.error("Error sending info about removing user(-s) to user {}", user.getId());
+                }
+            }
+        }
     }
 
     @Override

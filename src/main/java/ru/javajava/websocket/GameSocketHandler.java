@@ -103,6 +103,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
 
 
+
     @Override
     public void handleTransportError(WebSocketSession webSocketSession, Throwable throwable) throws Exception {
         LOGGER.warn("Websocket transport problem", throwable);

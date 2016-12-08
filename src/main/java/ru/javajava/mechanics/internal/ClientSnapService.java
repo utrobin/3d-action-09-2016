@@ -19,7 +19,6 @@ import java.util.*;
 public class ClientSnapService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientSnapService.class);
 
-    // User и его последний Snapshot
     private final Map<Long, List<UserSnap>> userToSnaps = new HashMap<>();
 
     private static final int RADIUS = 3;
@@ -77,12 +76,14 @@ public class ClientSnapService {
             if (enemyCoords == null) {
                 continue;
             }
-
-            final MyVector idealShot = new MyVector(enemyCoords.subtract(position));    // Вектор идеального выстрела в центр врага
+                                    // Вектор идеального выстрела в центр врага
+            final MyVector idealShot = new MyVector(enemyCoords.subtract(position));
 
             final double distance = enemyCoords.getDistanceBetween(position);   // Расстояние до врага
             final double hypotenuse = Math.sqrt(distance*distance + RADIUS*RADIUS);
-            final double maxCos = distance / hypotenuse;   // Косинус МАКСИМАЛЬНО возможного угла между идеальным вектором и существующим
+
+            // Косинус МАКСИМАЛЬНО возможного угла между идеальным вектором и существующим
+            final double maxCos = distance / hypotenuse;
 
             final double cos = currentShot.getCos(idealShot);
             if (cos >= maxCos) {

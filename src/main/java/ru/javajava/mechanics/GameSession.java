@@ -3,8 +3,7 @@ package ru.javajava.mechanics;
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.model.UserProfile;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -13,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class GameSession {
     private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
     private final Long sessionId;
-    private final List<GameUser> players = new ArrayList<>();
+    private final Set<GameUser> players = new HashSet<>();
 
     // Максимальное значение игроков в одной комнате
     public static final int MAX_PLAYERS = 16;
@@ -52,7 +51,7 @@ public class GameSession {
         }
     }
 
-    public List<GameUser> getPlayers() {
+    public Set<GameUser> getPlayers() {
         return players;
     }
 
