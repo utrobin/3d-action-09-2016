@@ -14,6 +14,9 @@ public class ServerPlayerSnap {
     @JsonProperty("hp")
     private int hp;
 
+    @JsonProperty ("shot")
+    private boolean shot;
+
     public Coords getPosition() {
         return position;
     }
@@ -36,5 +39,13 @@ public class ServerPlayerSnap {
 
     public void setHp(int hp) {
         this.hp = hp;
+    }
+
+    public boolean isShot() {
+        return shot;
+    }
+
+    public void setShot(boolean shot) {
+        this.shot = shot;
     }
 }
