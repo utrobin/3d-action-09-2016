@@ -48,7 +48,7 @@ public class ServerSnapService {
                 remotePointService.sendMessageToUser(player.getId(), message);
             }
         } catch (IOException e) {
-            LOGGER.error("Can not serialize server snap! {}", e.getMessage());
+            LOGGER.error("Error sending server snap! {}", e.getMessage());
         }
 
     }

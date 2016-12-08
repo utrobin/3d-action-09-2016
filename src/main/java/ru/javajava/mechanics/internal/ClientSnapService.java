@@ -48,15 +48,11 @@ public class ClientSnapService {
                 if (!snap.isFiring()) {
                     continue;
                 }
-
-                final GameUser murdered = processFiring (snap, players);
-                if (murdered != null) { // Если игрок в кого-то попал
-                    murdered.markShot();
+                final GameUser victim = processFiring (snap, players);
+                if (victim != null) { // Если игрок в кого-то попал
+                    victim.markShot();
                     LOGGER.info("--------------------------------------------------------");
-                    LOGGER.info("{} was shot by {}!", murdered.getUserProfile().getLogin(), player.getUserProfile().getLogin());
-                }
-                else {
-                    LOGGER.info("Missed");
+                    LOGGER.info("{} was shot by {}!", victim.getUserProfile().getLogin(), player.getUserProfile().getLogin());
                 }
             }
         }
@@ -69,9 +65,9 @@ public class ClientSnapService {
         final CameraDirection cameraDirection  = snap.getCamera();
         final double horizAngle = cameraDirection.getHorizontalAngle();
         final double verticAngle = cameraDirection.getVerticalAngle();
+
                                                                     // Вектор текущего выстрела
         final MyVector currentShot = new MyVector(-Math.sin(horizAngle), Math.sin(verticAngle), -Math.cos(horizAngle));
-
 
         for (GameUser player: players) {
             if (player.getId() == snap.getId()) {
@@ -88,11 +84,7 @@ public class ClientSnapService {
             final double hypotenuse = Math.sqrt(distance*distance + RADIUS*RADIUS);
             final double maxCos = distance / hypotenuse;   // Косинус МАКСИМАЛЬНО возможного угла между идеальным вектором и существующим
 
-
             final double cos = currentShot.getCos(idealShot);
-            LOGGER.info("Ideal shot: ({}, {}, {})", idealShot.getX(), idealShot.getY(), idealShot.getZ());
-            LOGGER.info("My shot: ({}, {}, {})", currentShot.getX(), currentShot.getY(), currentShot.getZ());
-            LOGGER.info("MaxCos = {}, cos = {}", maxCos, cos);
             if (cos >= maxCos) {
                 return player;      // Игрок попал
             }
@@ -102,28 +94,8 @@ public class ClientSnapService {
     }
 
 
-    private boolean isCollinear(Coords first, Coords second) {
-        double a = (double) Math.round(first.x / second.x * 100) / 100;
-        double b = (double) Math.round(first.y / second.y * 100) / 100;
-        double c = (double) Math.round(first.z / second.z * 100) / 100;
-//        LOGGER.info("---------------------");
-//
-//        LOGGER.info("---------------------");
-        return true;
-    }
-
-
-
-
-
-
-
-
-
-
     public void clear() {
         userToSnaps.clear();
     }
-
 }
 

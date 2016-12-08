@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
  */
 @Service
 public class MechanicsExecutor implements Runnable {
-    private static final long STEP_TIME = 50;
+    private static final long STEP_TIME = 30;
 
     private final GameMechanics gameMechanics;
 
