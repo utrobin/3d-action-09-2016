@@ -12,7 +12,7 @@ public class GameUser {
     private Coords position;
     private int hp = 100;
     public static final int SHOT_REDUCING = 35;
-    private boolean wasShooted;
+    private boolean wasShot;
 
     public GameUser(UserProfile userProfile) {
         this.userProfile = userProfile;
@@ -39,8 +39,6 @@ public class GameUser {
         result.setUserId(getId());
         result.setPosition(position);
         result.setHp(hp);
-        result.setShot(wasShooted);
-        wasShooted = false;         // После каждого снапа сбрасываем этот флаг
         return result;
     }
 
@@ -53,11 +51,17 @@ public class GameUser {
     }
 
     public void markShot() {
-        wasShooted = true;
+        wasShot = true;
         hp -= SHOT_REDUCING;
         if (hp < 0) {
             hp = 0;
         }
+    }
+
+    public boolean getAndResetShot() {
+        final boolean temp = wasShot;
+        wasShot = false;
+        return temp;
     }
 
     public void markСomplHealthy() {
