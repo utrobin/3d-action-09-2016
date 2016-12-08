@@ -43,10 +43,10 @@ public class ServerSnapService {
 
         snap.setPlayers(playersSnaps);
         try {
-            final Message message = new Message(Message.SNAPSHOT, objectMapper.writeValueAsString(snap));
             for (GameUser player : players) {
-                boolean wasShot = player.getAndResetShot();
+                final boolean wasShot = player.getAndResetShot();
                 snap.setShot(wasShot);
+                final Message message = new Message(Message.SNAPSHOT, objectMapper.writeValueAsString(snap));
                 remotePointService.sendMessageToUser(player.getId(), message);
             }
         } catch (IOException e) {
