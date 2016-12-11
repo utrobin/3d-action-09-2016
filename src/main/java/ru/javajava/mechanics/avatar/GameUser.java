@@ -44,6 +44,7 @@ public class GameUser {
         result.setPosition(position);
         result.setHp(hp);
         result.setVictims(victims);
+        victims.clear();            // Очистка после генерирования снапшота
         return result;
     }
 

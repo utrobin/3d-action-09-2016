@@ -2,10 +2,7 @@ package ru.javajava.mechanics.base;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -19,7 +16,7 @@ public class ServerPlayerSnap {
     @JsonProperty("hp")
     private int hp;
     @JsonProperty("victims")
-    private Set<Long> victims = new HashSet<>();    // Кого убил данный игрок
+    private final Set<Long> victims = new HashSet<>();    // Кого убил данный игрок
 
     public Coords getPosition() {
         return position;
@@ -49,7 +46,7 @@ public class ServerPlayerSnap {
         return victims;
     }
 
-    public void setVictims(Set<Long> victims) {
-        this.victims = victims;
+    public void setVictims(Collection<Long> victims) {
+        this.victims.addAll(victims);
     }
 }
