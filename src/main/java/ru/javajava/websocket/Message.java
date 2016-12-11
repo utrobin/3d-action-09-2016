@@ -15,6 +15,14 @@ public class Message {
     public static final String SNAPSHOT = "Snapshot";
     public static final String REMOVE_USER = "RemovePlayer";
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+
     public String getType() {
         return type;
     }

@@ -4,6 +4,9 @@ import ru.javajava.mechanics.base.Coords;
 import ru.javajava.mechanics.base.ServerPlayerSnap;
 import ru.javajava.model.UserProfile;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by ivan on 14.11.16.
  */
@@ -13,6 +16,7 @@ public class GameUser {
     private int hp = 100;
     public static final int SHOT_REDUCING = 35;
     private boolean wasShot;
+    private final Set<Long> victims = new HashSet<>(); // Кого убил данный игрок
 
     public GameUser(UserProfile userProfile) {
         this.userProfile = userProfile;
@@ -39,6 +43,7 @@ public class GameUser {
         result.setUserId(getId());
         result.setPosition(position);
         result.setHp(hp);
+        result.setVictims(victims);
         return result;
     }
 
@@ -56,6 +61,10 @@ public class GameUser {
         if (hp < 0) {
             hp = 0;
         }
+    }
+
+    public void addVictim (long victim) {
+        victims.add(victim);
     }
 
     public boolean getAndResetShot() {

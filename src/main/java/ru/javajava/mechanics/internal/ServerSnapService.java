@@ -33,8 +33,10 @@ public class ServerSnapService {
         final Collection<GameUser> players = gameSession.getPlayers();
         final List<ServerPlayerSnap> playersSnaps = new ArrayList<>();
         for (GameUser player : players) {
-            playersSnaps.add(player.generateSnap());
+            final ServerPlayerSnap serverPlayerSnap = player.generateSnap();
+            playersSnaps.add(serverPlayerSnap);
         }
+
         final ServerSnap snap = new ServerSnap();
 
         if (playersSnaps.isEmpty()) {
@@ -43,10 +45,12 @@ public class ServerSnapService {
 
         snap.setPlayers(playersSnaps);
         try {
+            final Message message = new Message();
+            message.setType(Message.SNAPSHOT);
             for (GameUser player : players) {
                 final boolean wasShot = player.getAndResetShot();
                 snap.setShot(wasShot);
-                final Message message = new Message(Message.SNAPSHOT, objectMapper.writeValueAsString(snap));
+                message.setData(objectMapper.writeValueAsString(snap));
                 remotePointService.sendMessageToUser(player.getId(), message);
             }
         } catch (IOException e) {

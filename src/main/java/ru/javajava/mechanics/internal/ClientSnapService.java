@@ -49,6 +49,7 @@ public class ClientSnapService {
                 }
                 final GameUser victim = processFiring (snap, players);
                 if (victim != null) { // Если игрок в кого-то попал
+                    player.addVictim(victim.getId());
                     victim.markShot();
                     LOGGER.info("--------------------------------------------------------");
                     LOGGER.info("{} was shot by {}!", victim.getUserProfile().getLogin(), player.getUserProfile().getLogin());
@@ -66,10 +67,9 @@ public class ClientSnapService {
         final double y = cameraDirection.getHorizontalAngle();
         final double z = cameraDirection.getZ();
 
-                                                                    // Вектор текущего выстрела
-        final MyVector currentShot = new MyVector(x,y,z);       //(-Math.sin(horizAngle), Math.sin(verticAngle), -Math.cos(horizAngle));
+        // Вектор текущего выстрела
+        final MyVector currentShot = new MyVector(x,y,z);     //(-Math.sin(horizAngle), Math.sin(verticAngle), -Math.cos(horizAngle));
 
-        LOGGER.info("Current shot: ({}, {}, {})", x, y, z);
 
         for (GameUser player: players) {
             if (player.getId() == snap.getId()) {
@@ -82,7 +82,6 @@ public class ClientSnapService {
                                     // Вектор идеального выстрела в центр врага
             final MyVector idealShot = new MyVector(enemyCoords.subtract(position));
 
-            LOGGER.info("Ideal shot: ({}, {}, {})", idealShot.getX(), idealShot.getY(), idealShot.getZ());
 
             final double distance = enemyCoords.getDistanceBetween(position);   // Расстояние до врага
             final double hypotenuse = Math.sqrt(distance*distance + RADIUS*RADIUS);
