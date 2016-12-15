@@ -3,10 +3,9 @@ package ru.javajava.mechanics.internal;
 import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;
-<<<<<<< HEAD
+
 import ru.javajava.mechanics.base.Coords;
-=======
->>>>>>> 45d9d3a... Some improvements
+
 import ru.javajava.mechanics.base.MyVector;
 import ru.javajava.mechanics.base.UserSnap;
 
@@ -34,7 +33,6 @@ public class ClientSnapService {
     public void processSnapshotsFor(GameSession gameSession) {
         final Collection<GameUser> players = gameSession.getPlayers();
         for (GameUser player : players) {
-            player.resetState();    // Сбрасываем остатки с прошлых снапшотов
             final List<UserSnap> playerSnaps = getSnapsForUser(player.getId());
             if (playerSnaps == null || playerSnaps.isEmpty()) {
                 continue;
@@ -49,12 +47,9 @@ public class ClientSnapService {
                 final GameUser victim = processFiring (snap, players);
                 if (victim != null) {
                     victim.markShot();
-<<<<<<< HEAD
                     if (!victim.isAlive()) {
                         player.addVictim(victim.getId());
                     }
-=======
->>>>>>> 45d9d3a... Some improvements
                 }
             }
         }
@@ -64,12 +59,6 @@ public class ClientSnapService {
 
     private GameUser processFiring(UserSnap snap, Iterable<GameUser> players) {
         final Coords position = snap.getPosition();
-<<<<<<< HEAD
-=======
-        final Coords cameraDirection  = snap.getCamera();
-        // Вектор текущего выстрела
-        final MyVector currentShot = new MyVector(cameraDirection);
->>>>>>> 45d9d3a... Some improvements
 
         final Coords cameraDirection  = snap.getCamera();
         final MyVector currentShot = new MyVector(cameraDirection);
