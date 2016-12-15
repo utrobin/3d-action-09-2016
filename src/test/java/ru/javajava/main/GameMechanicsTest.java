@@ -54,6 +54,7 @@ import static org.mockito.Mockito.when;
 public class GameMechanicsTest {
     @MockBean
     private RemotePointService remotePointService;
+
     @Autowired
     private AccountService accountService;
 

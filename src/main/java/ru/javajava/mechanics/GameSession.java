@@ -38,10 +38,6 @@ public class GameSession {
         players.add(new GameUser(player));
     }
 
-    public void removePlayer (UserProfile player) {
-        final GameUser gameUser = new GameUser(player);
-        players.remove(gameUser);
-    }
 
     public void removePlayer (long userId) {
         for (GameUser player: players) {

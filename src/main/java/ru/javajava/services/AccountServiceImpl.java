@@ -1,9 +1,11 @@
 package ru.javajava.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.javajava.DAO.UserDAO;
+import ru.javajava.exceptions.AlreadyExistsException;
 import ru.javajava.model.UserProfile;
 
 /**
@@ -16,8 +18,13 @@ public class AccountServiceImpl implements AccountService {
     private UserDAO userDAO;
 
     @Override
-    public UserProfile addUser(String login, String password, String email) {
-        return userDAO.addUser(login, password, email);
+    public UserProfile addUser(String login, String password, String email) throws AlreadyExistsException {
+        try {
+            return userDAO.addUser(login, password, email);
+        }
+        catch (DuplicateKeyException e) {
+            throw new AlreadyExistsException("User already exists!");
+        }
     }
 
     @Override
