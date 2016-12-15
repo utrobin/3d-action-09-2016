@@ -19,6 +19,8 @@ public class GameUser {
     private final Set<Long> victims = new HashSet<>();
     private int scores;
 
+    private int scores = 0;
+
     public GameUser(UserProfile userProfile) {
         this.userProfile = userProfile;
     }
@@ -84,10 +86,14 @@ public class GameUser {
         hp = 100;
     }
 
+    public void addScore() {
+        scores++;
+    }
 
     public int getScores() {
         return scores;
     }
+    
 
     @Override
     public boolean equals(Object o) {
