@@ -47,6 +47,7 @@ public class GameUser {
         }
     }
 
+
     public ServerPlayerSnap generateSnap() {
         final ServerPlayerSnap result = new ServerPlayerSnap();
         result.setUserId(getId());
@@ -75,19 +76,14 @@ public class GameUser {
         scores++;
     }
 
-    public boolean getAndResetShot() {
-        final boolean temp = wasShot;
-        wasShot = false;
-        return temp;
+    public boolean getShot() {
+        return wasShot;
     }
 
-    public void markСomplHealthy() {
+    public void setFullHealth() {
         hp = 100;
     }
 
-    private void setFullHealth() {
-        hp = 100;
-    }
 
     public int getScores() {
         return scores;
