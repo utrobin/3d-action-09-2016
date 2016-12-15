@@ -15,12 +15,12 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class JoinGameHandler extends MessageHandler<JoinGame.Request> {
-    private final GameMechanics gameMechanics;
+    private final MechanicsExecutor mechanicsExecutor;
     private final MessageHandlerContainer messageHandlerContainer;
 
-    public JoinGameHandler(GameMechanics gameMechanics, MessageHandlerContainer messageHandlerContainer) {
+    public JoinGameHandler(MechanicsExecutor mechanicsExecutor, MessageHandlerContainer messageHandlerContainer) {
         super(JoinGame.Request.class);
-        this.gameMechanics = gameMechanics;
+        this.mechanicsExecutor = mechanicsExecutor;
         this.messageHandlerContainer = messageHandlerContainer;
     }
 
@@ -31,6 +31,6 @@ public class JoinGameHandler extends MessageHandler<JoinGame.Request> {
 
     @Override
     public void handle(JoinGame.Request message, long forUser) throws HandleException {
-        gameMechanics.addUser(forUser);
+        mechanicsExecutor.addUser(forUser);
     }
 }

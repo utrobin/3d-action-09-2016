@@ -15,12 +15,12 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class DisconnectUserHandler extends MessageHandler<Disconnect.Request> {
-    private final GameMechanics gameMechanics;
+    private final MechanicsExecutor mechanicExecutor;
     private final MessageHandlerContainer messageHandlerContainer;
 
-    public DisconnectUserHandler(GameMechanics gameMechanics, MessageHandlerContainer messageHandlerContainer) {
+    public DisconnectUserHandler(MechanicsExecutor mechanicExecutor, MessageHandlerContainer messageHandlerContainer) {
         super(Disconnect.Request.class);
-        this.gameMechanics = gameMechanics;
+        this.mechanicExecutor = mechanicExecutor;
         this.messageHandlerContainer = messageHandlerContainer;
     }
 
@@ -31,7 +31,7 @@ public class DisconnectUserHandler extends MessageHandler<Disconnect.Request> {
 
     @Override
     public void handle(Disconnect.Request message, long forUser) throws HandleException {
-        gameMechanics.removeUser(forUser);
+        mechanicExecutor.removeUser(forUser);
     }
 }
 

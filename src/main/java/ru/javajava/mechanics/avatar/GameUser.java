@@ -93,7 +93,7 @@ public class GameUser {
     public int getScores() {
         return scores;
     }
-    
+
 
     @Override
     public boolean equals(Object o) {

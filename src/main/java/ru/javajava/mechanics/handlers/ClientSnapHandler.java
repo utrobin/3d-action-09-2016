@@ -1,6 +1,7 @@
 package ru.javajava.mechanics.handlers;
 
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.GameMechanics;
 import ru.javajava.mechanics.MechanicsExecutor;
 import ru.javajava.mechanics.base.UserSnap;
@@ -15,12 +16,12 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class ClientSnapHandler extends MessageHandler<UserSnap> {
-    private GameMechanics gameMechanics;
+    private final MechanicsExecutor mechanicsExecutor;
     private final MessageHandlerContainer messageHandlerContainer;
 
-    public ClientSnapHandler(GameMechanics gameMechanics, MessageHandlerContainer messageHandlerContainer) {
+    public ClientSnapHandler(MechanicsExecutor mechanicsExecutor, MessageHandlerContainer messageHandlerContainer) {
         super(UserSnap.class);
-        this.gameMechanics = gameMechanics;
+        this.mechanicsExecutor = mechanicsExecutor;
         this.messageHandlerContainer = messageHandlerContainer;
     }
 
@@ -31,6 +32,6 @@ public class ClientSnapHandler extends MessageHandler<UserSnap> {
 
     @Override
     public void handle(UserSnap message, long forUser) throws HandleException {
-        gameMechanics.addClientSnapshot(forUser, message);
+        mechanicsExecutor.addClientSnapshot(forUser, message);
     }
 }
