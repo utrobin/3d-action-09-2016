@@ -11,12 +11,17 @@ public interface GameMechanics {
 
     void addUser(long user);
 
-    void removeUser (long user);
+    boolean hasFreeSlots();
+
+    boolean removeUser (long user);
+
+    boolean isPlaying (long user);
 
     void gmStep(long frameTime);
 
     int getSessionsNum();
 
     GameSession getSessionForUser(long user);
+
     void reset();
 }

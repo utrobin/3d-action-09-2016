@@ -44,11 +44,11 @@ public class GameMechanicsImpl implements GameMechanics {
 
     public GameMechanicsImpl(AccountService accountService, ServerSnapService serverSnapshotService,
                              RemotePointService remotePointService,
-                             GameSessionService gameSessionService, ClientSnapService clientSnapService) {
+                              ClientSnapService clientSnapService) {
         this.accountService = accountService;
         this.serverSnapshotService = serverSnapshotService;
         this.remotePointService = remotePointService;
-        this.gameSessionService = gameSessionService;
+        this.gameSessionService = new GameSessionService(remotePointService);
         this.clientSnapshotsService = clientSnapService;
     }
 
@@ -68,13 +68,23 @@ public class GameMechanicsImpl implements GameMechanics {
     }
 
     @Override
-    public void removeUser(long user) {
-        if (!gameSessionService.isPlaying(user)) {
-            return;
-        }
-        deleted.add(user);
+    public boolean hasFreeSlots() {
+        return gameSessionService.hasFreeSlots();
     }
 
+    @Override
+    public boolean removeUser(long user) {
+        if (!gameSessionService.isPlaying(user)) {
+            return false;
+        }
+        deleted.add(user);
+        return true;
+    }
+
+    @Override
+    public boolean isPlaying(long user) {
+        return gameSessionService.isPlaying(user);
+    }
 
     @Override
     public GameSession getSessionForUser(long user) {
@@ -165,6 +175,11 @@ public class GameMechanicsImpl implements GameMechanics {
         for (GameSession session: sessions) {
             gameSessionService.notifyGameIsOver(session);
         }
+    }
+
+    @Override
+    public int getSessionsNum() {
+        return gameSessionService.getSessions().size();
     }
 }
 
