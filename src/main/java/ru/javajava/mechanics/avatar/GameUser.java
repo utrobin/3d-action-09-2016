@@ -72,6 +72,7 @@ public class GameUser {
 
     public void addVictim (long victim) {
         victims.add(victim);
+        scores++;
     }
 
     public boolean getAndResetShot() {
@@ -88,8 +89,8 @@ public class GameUser {
         hp = 100;
     }
 
-    public void addScore() {
-        scores++;
+    public int getScores() {
+        return scores;
     }
 
     @Override

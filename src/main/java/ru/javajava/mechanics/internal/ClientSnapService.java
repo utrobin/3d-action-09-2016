@@ -44,7 +44,6 @@ public class ClientSnapService {
                 }
                 final GameUser victim = processFiring (snap, players);
                 if (victim != null) {
-                    player.addScore();
                     victim.markShot();
                     if (!victim.isAlive()) {
                         player.addVictim(victim.getId());

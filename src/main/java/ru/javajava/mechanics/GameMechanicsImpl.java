@@ -54,6 +54,8 @@ public class GameMechanicsImpl implements GameMechanics {
         this.clientSnapshotsService = new ClientSnapService();
     }
 
+
+
     @Override
     public void addClientSnapshot(long userId, UserSnap userSnap) {
         tasks.add(() -> clientSnapshotsService.pushClientSnap(userId, userSnap));
@@ -75,6 +77,11 @@ public class GameMechanicsImpl implements GameMechanics {
         deleted.add(user);
     }
 
+
+    @Override
+    public GameSession getSessionForUser(long user) {
+        return gameSessionService.getSessionForUser(user);
+    }
 
     private boolean insureCandidate(long candidate) {
         return remotePointService.isConnected(candidate) &&

@@ -15,5 +15,8 @@ public interface GameMechanics {
 
     void gmStep(long frameTime);
 
+    int getSessionsNum();
+
+    GameSession getSessionForUser(long user);
     void reset();
 }

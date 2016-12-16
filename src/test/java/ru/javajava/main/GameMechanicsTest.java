@@ -45,8 +45,6 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @Transactional
 public class GameMechanicsTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GameMechanicsTest.class);
-
     @MockBean
     private RemotePointService remotePointService;
     @Autowired
