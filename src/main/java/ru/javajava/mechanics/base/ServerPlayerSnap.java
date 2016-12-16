@@ -2,7 +2,9 @@ package ru.javajava.mechanics.base;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**

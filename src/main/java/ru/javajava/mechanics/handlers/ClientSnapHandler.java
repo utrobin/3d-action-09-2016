@@ -2,6 +2,7 @@ package ru.javajava.mechanics.handlers;
 
 import org.springframework.stereotype.Component;
 import ru.javajava.mechanics.GameMechanics;
+import ru.javajava.mechanics.MechanicsExecutor;
 import ru.javajava.mechanics.base.UserSnap;
 import ru.javajava.websocket.HandleException;
 import ru.javajava.websocket.MessageHandler;

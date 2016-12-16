@@ -3,7 +3,8 @@ package ru.javajava.mechanics;
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.model.UserProfile;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**

@@ -3,7 +3,10 @@ package ru.javajava.mechanics;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+<<<<<<< HEAD
 import org.springframework.stereotype.Service;
+=======
+>>>>>>> 293be5c... Removed rubbish
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.mechanics.base.UserSnap;
 import ru.javajava.mechanics.internal.ClientSnapService;

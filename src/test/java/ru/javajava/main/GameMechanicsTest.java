@@ -1,37 +1,28 @@
 package ru.javajava.main;
 
-import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.access.method.P;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javajava.exceptions.AlreadyExistsException;
 import ru.javajava.mechanics.GameMechanics;
 import ru.javajava.mechanics.GameMechanicsImpl;
 import ru.javajava.mechanics.GameSession;
-import ru.javajava.mechanics.MechanicsExecutor;
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.mechanics.base.Coords;
-import ru.javajava.mechanics.base.MyVector;
-import ru.javajava.mechanics.base.ServerPlayerSnap;
 import ru.javajava.mechanics.base.UserSnap;
 import ru.javajava.mechanics.internal.ClientSnapService;
-import ru.javajava.mechanics.internal.GameSessionService;
 import ru.javajava.mechanics.internal.ServerSnapService;
 import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountService;
 import ru.javajava.websocket.RemotePointService;
 
 import java.util.Random;
-import java.util.Set;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -92,12 +83,10 @@ public class GameMechanicsTest {
                 new Coords(random.nextDouble(), random.nextDouble(), random.nextDouble());
         snapSecondPlayer.setPosition(secondPlayerPos);
 
-        // Вектор выстрела второго игрока по первому направляем в центр первого игрока
         final Coords secondPlayerShot = firstPlayerPos.subtract(secondPlayerPos);
         snapSecondPlayer.setCamera(secondPlayerShot);
         snapSecondPlayer.setFiring(true);
 
-        // Один выстрел по первому игроку
         gameMechanics.addClientSnapshot(user1.getId(), snapFirstPlayer);
         gameMechanics.addClientSnapshot(user2.getId(), snapSecondPlayer);
         gameMechanics.gmStep(5);
@@ -107,7 +96,6 @@ public class GameMechanicsTest {
 
         Assert.assertTrue("There should be no kills yet!", player2.getScores() == 0);
 
-        // Еще два выстрела
         gameMechanics.addClientSnapshot(user2.getId(), snapSecondPlayer);
         gameMechanics.addClientSnapshot(user2.getId(), snapSecondPlayer);
         gameMechanics.gmStep(5);

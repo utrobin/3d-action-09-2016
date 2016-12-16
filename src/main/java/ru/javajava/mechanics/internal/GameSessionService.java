@@ -9,7 +9,10 @@ import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.model.UserProfile;
 import ru.javajava.websocket.RemotePointService;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by ivan on 15.11.16.

@@ -24,8 +24,6 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
     private final AccountService accountService;
 
-    //private PingService pingService;
-
     private final MessageHandlerContainer messageHandlerContainer;
 
     private final RemotePointService remotePointService;
@@ -33,13 +31,9 @@ public class GameSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
 
-
-
-
-    public GameSocketHandler(MessageHandlerContainer messageHandlerContainer, /*PingService pingService, */
+    public GameSocketHandler(MessageHandlerContainer messageHandlerContainer,
                              AccountService accountService, RemotePointService remotePointService) {
         this.messageHandlerContainer = messageHandlerContainer;
-    //    this.pingService = pingService;
         this.accountService = accountService;
         this.remotePointService = remotePointService;
     }
@@ -66,12 +60,10 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
 
         remotePointService.registerUser(player.getId(), webSocketSession);
-        //pingService.refreshPing(userId);
 
         sendIdToClient(webSocketSession, player.getId());
 
 
-        // Регистрация юзера в JoinGameHandler
         final Message message = new Message(JoinGame.Request.class, "{}");
         try {
             messageHandlerContainer.handle(message, player.getId());
@@ -86,7 +78,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
         final Long userId = (Long) session.getAttributes().get("userId");
         final UserProfile user;
-        if (userId == null || (user = accountService.getUserById(userId)) == null) {    // Неавторизованный юзер
+        if (userId == null || (user = accountService.getUserById(userId)) == null) {
             return;
         }
 
