@@ -73,7 +73,7 @@ public class GameSessionService {
         LOGGER.info("--------------------------------------------------------");
         LOGGER.info("Player #{} was removed from room #{} (players here: {})", userId, session.getId(), session.getPlayers().size());
         if (session.isEmpty()) {
-            notifyGameIsOver(session);  // Завершение текущей игры
+            notifyGameIsOver(session);
         }
     }
 

@@ -53,7 +53,6 @@ public class MechanicsExecutor {
     private static final long STEP_TIME = 30;
     private static final int THREADS_NUM = 4;
 
-    // ThreadFactory для именования потоков
     private final ThreadFactory threadFactory = new ThreadFactoryBuilder()
             .setNameFormat("Game-механики")
             .build();

@@ -102,7 +102,6 @@ public class GameMechanicsImpl implements GameMechanics {
         }
 
 
-        // Отправка снапшотов
         final Iterator<GameSession> iterator = gameSessionService.getSessions().iterator();
         final Collection<GameSession> sessionsToTerminate = new ArrayList<>();
         while (iterator.hasNext()) {
@@ -117,11 +116,9 @@ public class GameMechanicsImpl implements GameMechanics {
         }
 
 
-        // Удаление вышедших пользователей
         removeLeftUsers();
 
 
-        // Добавление новых игроков в игру
         while (!waiters.isEmpty()) {
             final long candidate = waiters.poll();
             if (!insureCandidate(candidate)) {
@@ -148,7 +145,6 @@ public class GameMechanicsImpl implements GameMechanics {
             leftUsers.add(removedPlayer);
         }
 
-        // Отправка сведений о вышедших юзерах игрокам в каждой связанной сессии
         for (GameSession session : sessionLeftPlayers.keySet()) {
             final List<Long> playersLeft = sessionLeftPlayers.get(session);
             final JSONArray jsonArray = new JSONArray(playersLeft);
