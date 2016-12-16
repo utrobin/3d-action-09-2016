@@ -94,23 +94,13 @@ public class GameMechanicsTest {
         final GameUser player2 = gameSession.getPlayers().stream()
                 .filter(x -> x.getId() == user2.getId()).findFirst().get();
 
-        Assert.assertTrue("There should be no kills yet!", player2.getScores() == 0);
+        Assert.assertEquals("There should be no kills yet!", 0, player2.getScores());
 
         gameMechanics.addClientSnapshot(user2.getId(), snapSecondPlayer);
         gameMechanics.addClientSnapshot(user2.getId(), snapSecondPlayer);
         gameMechanics.gmStep(5);
 
-        Assert.assertTrue("Player 1 should be killed by player 2!", player2.getScores() > 0);
-    }
-
-
-    private GameSession startGame(long player1, long player2, GameMechanics gameMechanics) {
-        gameMechanics.addUser(player1);
-        gameMechanics.addUser(player2);
-        gameMechanics.gmStep(5);
-        final GameSession gameSession = gameMechanics.getSessionForUser(player1);
-        Assert.assertNotNull("Game session should be started on closest tick, but it didn't", gameSession);
-        return gameSession;
+        Assert.assertEquals("Player 1 should be killed by player 2!", 1, player2.getScores());
     }
 
     @Test
@@ -128,8 +118,8 @@ public class GameMechanicsTest {
             usersTotal++;
         }
 
-        Assert.assertTrue("Should be still one room", gameMechanics.getSessionsNum() == 1);
-        Assert.assertTrue("Everybody should play in this session", gameSession.getPlayers().size() == usersTotal);
+        Assert.assertEquals("Should be still one room", 1, gameMechanics.getSessionsNum());
+        Assert.assertEquals("Everybody should play in this session", usersTotal, gameSession.getPlayers().size());
 
         UserProfile newUser = accountService.addUser(
                 "extraUser" + usersTotal, "lkjhgfdsasdfgh", "mailmail@yandex.ru" + usersTotal);
@@ -137,7 +127,7 @@ public class GameMechanicsTest {
         gameMechanics.gmStep(5);
         usersTotal++;
 
-        Assert.assertTrue("Should be created second session", gameMechanics.getSessionsNum() == 2);
+        Assert.assertEquals("Should be created second session", 2, gameMechanics.getSessionsNum());
 
         newUser = accountService.addUser(
                 "extraUser" + usersTotal, "lkjhgfdsasdfgh", "mailmail@yandex.ru" + usersTotal);
@@ -145,7 +135,16 @@ public class GameMechanicsTest {
         gameMechanics.gmStep(5);
 
         final GameSession newSession = gameMechanics.getSessionForUser(newUser.getId());
-        Assert.assertTrue("New room should contain two players", newSession.getPlayers().size() == 2);
+        Assert.assertEquals("New room should contain two players", 2, newSession.getPlayers().size());
+    }
+
+    private GameSession startGame(long player1, long player2, GameMechanics gameMechanics) {
+        gameMechanics.addUser(player1);
+        gameMechanics.addUser(player2);
+        gameMechanics.gmStep(5);
+        final GameSession gameSession = gameMechanics.getSessionForUser(player1);
+        Assert.assertNotNull("Game session should be started on closest tick, but it didn't", gameSession);
+        return gameSession;
     }
 }
 
