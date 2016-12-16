@@ -16,7 +16,8 @@ public class GameUser {
     private int hp = 100;
     public static final int SHOT_REDUCING = 35;
     private boolean wasShot;
-    private final Set<Long> victims = new HashSet<>(); // Кого убил данный игрок
+    private final Set<Long> victims = new HashSet<>();
+    private int scores;
 
     public GameUser(UserProfile userProfile) {
         this.userProfile = userProfile;
@@ -38,22 +39,27 @@ public class GameUser {
         return userProfile.getId();
     }
 
+    public void resetForNextSnap() {
+        wasShot = false;
+        victims.clear();
+        if (hp == 0) {
+            setFullHealth();
+        }
+    }
+
     public ServerPlayerSnap generateSnap() {
         final ServerPlayerSnap result = new ServerPlayerSnap();
         result.setUserId(getId());
         result.setPosition(position);
         result.setHp(hp);
         result.setVictims(victims);
-        victims.clear();            // Очистка после генерирования снапшота
+        result.setScores(scores);
+        victims.clear();
         return result;
     }
 
     public boolean isAlive() {
         return hp > 0;
-    }
-
-    public void setHp(byte hp) {
-        this.hp = hp;
     }
 
     public void markShot() {
@@ -78,6 +84,13 @@ public class GameUser {
         hp = 100;
     }
 
+    private void setFullHealth() {
+        hp = 100;
+    }
+
+    public void addScore() {
+        scores++;
+    }
 
     @Override
     public boolean equals(Object o) {

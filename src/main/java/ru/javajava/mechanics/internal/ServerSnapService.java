@@ -52,6 +52,7 @@ public class ServerSnapService {
                 snap.setShot(wasShot);
                 message.setData(objectMapper.writeValueAsString(snap));
                 remotePointService.sendMessageToUser(player.getId(), message);
+                player.resetForNextSnap();
             }
         } catch (IOException e) {
             LOGGER.error("Error sending server snap! {}", e.getMessage());

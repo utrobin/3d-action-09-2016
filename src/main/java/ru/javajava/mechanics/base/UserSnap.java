@@ -13,7 +13,7 @@ public class UserSnap {
     private Coords position;
 
     @JsonProperty("camera")
-    private CameraDirection camera;
+    private Coords camera;
 
     @JsonProperty("firing")
     private boolean firing;
@@ -34,11 +34,11 @@ public class UserSnap {
         this.position = position;
     }
 
-    public CameraDirection getCamera() {
+    public Coords getCamera() {
         return camera;
     }
 
-    public void setCamera(CameraDirection camera) {
+    public void setCamera(Coords camera) {
         this.camera = camera;
     }
 

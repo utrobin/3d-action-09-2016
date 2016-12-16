@@ -129,13 +129,14 @@ public class GameMechanicsImpl implements GameMechanics {
         clientSnapshotsService.clear();
     }
 
+
     private void removeLeftUsers() {
         final Map<GameSession, List<Long>> sessionLeftPlayers = new HashMap<>();
         while (!deleted.isEmpty()) {
             final long removedPlayer = deleted.poll();
 
             final GameSession session = gameSessionService.getSessionForUser(removedPlayer);
-            gameSessionService.removePlayer(session, removedPlayer);     // Удаление игрока из сессии
+            gameSessionService.removePlayer(session, removedPlayer);
 
             sessionLeftPlayers.putIfAbsent(session, new ArrayList<>());
             final List<Long> leftUsers = sessionLeftPlayers.get(session);

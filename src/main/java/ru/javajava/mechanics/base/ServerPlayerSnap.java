@@ -16,7 +16,9 @@ public class ServerPlayerSnap {
     @JsonProperty("hp")
     private int hp;
     @JsonProperty("victims")
-    private final Set<Long> victims = new HashSet<>();    // Кого убил данный игрок
+    private final Set<Long> victims = new HashSet<>();
+    @JsonProperty("scores")
+    private int scores;
 
     public Coords getPosition() {
         return position;
@@ -48,5 +50,13 @@ public class ServerPlayerSnap {
 
     public void setVictims(Collection<Long> victims) {
         this.victims.addAll(victims);
+    }
+
+    public int getScores() {
+        return scores;
+    }
+
+    public void setScores(int scores) {
+        this.scores = scores;
     }
 }

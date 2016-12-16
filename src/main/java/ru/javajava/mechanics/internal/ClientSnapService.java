@@ -1,11 +1,8 @@
 package ru.javajava.mechanics.internal;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;
-import ru.javajava.mechanics.base.CameraDirection;
 import ru.javajava.mechanics.base.MyVector;
 import ru.javajava.mechanics.base.UserSnap;
 import ru.javajava.mechanics.base.Coords;
@@ -17,8 +14,6 @@ import java.util.*;
  */
 @Service
 public class ClientSnapService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClientSnapService.class);
-
     private final Map<Long, List<UserSnap>> userToSnaps = new HashMap<>();
 
     private static final int RADIUS = 3;
@@ -48,53 +43,48 @@ public class ClientSnapService {
                     continue;
                 }
                 final GameUser victim = processFiring (snap, players);
-                if (victim != null) { // Если игрок в кого-то попал
-                    player.addVictim(victim.getId());
+                if (victim != null) {
+                    player.addScore();
                     victim.markShot();
-                    LOGGER.info("--------------------------------------------------------");
-                    LOGGER.info("{} was shot by {}!", victim.getUserProfile().getLogin(), player.getUserProfile().getLogin());
+                    if (!victim.isAlive()) {
+                        player.addVictim(victim.getId());
+                    }
                 }
             }
         }
     }
 
 
-    // Функция возвращает игрока, в которого попали или null в случае промаха
+
     private GameUser processFiring(UserSnap snap, Iterable<GameUser> players) {
         final Coords position = snap.getPosition();
-        final CameraDirection cameraDirection  = snap.getCamera();
-        final double x = cameraDirection.getVerticalAngle();
-        final double y = cameraDirection.getHorizontalAngle();
-        final double z = cameraDirection.getZ();
 
-        // Вектор текущего выстрела
-        final MyVector currentShot = new MyVector(x,y,z);     //(-Math.sin(horizAngle), Math.sin(verticAngle), -Math.cos(horizAngle));
-
+        final Coords cameraDirection  = snap.getCamera();
+        final MyVector currentShot = new MyVector(cameraDirection);
 
         for (GameUser player: players) {
             if (player.getId() == snap.getId()) {
-                continue; // Это ты и есть
+                continue;
             }
             final Coords enemyCoords = player.getPosition();
             if (enemyCoords == null) {
                 continue;
             }
-                                    // Вектор идеального выстрела в центр врага
+
             final MyVector idealShot = new MyVector(enemyCoords.subtract(position));
 
 
-            final double distance = enemyCoords.getDistanceBetween(position);   // Расстояние до врага
+            final double distance = enemyCoords.getDistanceBetween(position);
             final double hypotenuse = Math.sqrt(distance*distance + RADIUS*RADIUS);
 
-            // Косинус МАКСИМАЛЬНО возможного угла между идеальным вектором и существующим
+
             final double maxCos = distance / hypotenuse;
 
             final double cos = currentShot.getCos(idealShot);
             if (cos >= maxCos) {
-                return player;      // Игрок попал
+                return player;
             }
         }
-
         return null;
     }
 
