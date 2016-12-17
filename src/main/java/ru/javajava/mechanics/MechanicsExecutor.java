@@ -1,18 +1,11 @@
 package ru.javajava.mechanics;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-
 import ru.javajava.mechanics.base.UserSnap;
 import ru.javajava.mechanics.internal.ClientSnapService;
-import ru.javajava.mechanics.internal.ServerSnapService;
-
-
-import ru.javajava.mechanics.base.UserSnap;
-import ru.javajava.mechanics.internal.ClientSnapService;
-import ru.javajava.mechanics.internal.GameSessionService;
 import ru.javajava.mechanics.internal.ServerSnapService;
 import ru.javajava.mechanics.utils.TimeHelper;
 import ru.javajava.services.AccountService;
@@ -20,17 +13,6 @@ import ru.javajava.websocket.RemotePointService;
 
 import javax.annotation.PostConstruct;
 import java.time.Clock;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import ru.javajava.services.AccountService;
-import ru.javajava.websocket.Message;
-import ru.javajava.websocket.RemotePointService;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -49,6 +31,8 @@ public class MechanicsExecutor {
     private ServerSnapService serverSnapshotService;
     @Autowired
     private RemotePointService remotePointService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     private static final long STEP_TIME = 30;
@@ -66,7 +50,7 @@ public class MechanicsExecutor {
     public void initAfterStartup() {
         for (int i = 0; i < gameMechanics.length; ++i) {
             gameMechanics[i] = new GameMechanicsImpl(accountService,
-                    serverSnapshotService, remotePointService, clientSnapshotsService);
+                    serverSnapshotService, remotePointService, clientSnapshotsService, objectMapper);
             final Runnable worker = new Worker(gameMechanics[i]);
             tickExecutors.execute(worker);
         }
@@ -74,7 +58,6 @@ public class MechanicsExecutor {
 
 
     public void addUser (long user) {
-
         for (GameMechanics gameMechanic: gameMechanics) {
             final boolean hasSlots = gameMechanic.hasFreeSlots();
             if (hasSlots) {

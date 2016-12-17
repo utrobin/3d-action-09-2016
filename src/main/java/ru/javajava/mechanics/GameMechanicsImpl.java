@@ -1,6 +1,7 @@
 package ru.javajava.mechanics;
-
-import org.json.JSONArray;
+;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.javajava.mechanics.avatar.GameUser;
@@ -40,16 +41,18 @@ public class GameMechanicsImpl implements GameMechanics {
         private ConcurrentLinkedQueue<Long> deleted = new ConcurrentLinkedQueue<>();
 
         private final Queue<Runnable> tasks = new ConcurrentLinkedQueue<>();
+        private final ObjectMapper objectMapper;
 
 
     public GameMechanicsImpl(AccountService accountService, ServerSnapService serverSnapshotService,
                              RemotePointService remotePointService,
-                              ClientSnapService clientSnapService) {
+                             ClientSnapService clientSnapService, ObjectMapper objectMapper) {
         this.accountService = accountService;
         this.serverSnapshotService = serverSnapshotService;
         this.remotePointService = remotePointService;
         this.gameSessionService = new GameSessionService(remotePointService);
         this.clientSnapshotsService = clientSnapService;
+        this.objectMapper = objectMapper;
     }
 
 
@@ -157,8 +160,15 @@ public class GameMechanicsImpl implements GameMechanics {
 
         for (GameSession session : sessionLeftPlayers.keySet()) {
             final List<Long> playersLeft = sessionLeftPlayers.get(session);
-            final JSONArray jsonArray = new JSONArray(playersLeft);
-            final Message message = new Message(Message.REMOVE_USER, jsonArray.toString());
+            final String jsonArray;
+            try {
+                jsonArray = objectMapper.writeValueAsString(playersLeft);
+            }
+            catch (JsonProcessingException e) {
+                LOGGER.error("Error serializing!");
+                continue;
+            }
+            final Message message = new Message(Message.REMOVE_USER, jsonArray);
             for (GameUser user : session.getPlayers()) {
                 try {
                     remotePointService.sendMessageToUser(user.getId(), message);

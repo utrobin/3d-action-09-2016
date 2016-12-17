@@ -2,8 +2,6 @@ package ru.javajava.mechanics.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;

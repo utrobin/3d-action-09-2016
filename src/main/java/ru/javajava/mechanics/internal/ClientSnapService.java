@@ -3,9 +3,7 @@ package ru.javajava.mechanics.internal;
 import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;
-
 import ru.javajava.mechanics.base.Coords;
-
 import ru.javajava.mechanics.base.MyVector;
 import ru.javajava.mechanics.base.UserSnap;
 

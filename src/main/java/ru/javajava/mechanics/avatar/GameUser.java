@@ -1,5 +1,6 @@
 package ru.javajava.mechanics.avatar;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import ru.javajava.mechanics.base.Coords;
 import ru.javajava.mechanics.base.ServerPlayerSnap;
 import ru.javajava.model.UserProfile;

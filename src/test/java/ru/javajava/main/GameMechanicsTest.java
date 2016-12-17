@@ -1,44 +1,30 @@
 package ru.javajava.main;
 
 
-import org.eclipse.jetty.websocket.server.WebSocketServerFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.access.method.P;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javajava.exceptions.AlreadyExistsException;
-import ru.javajava.mechanics.*;
+import ru.javajava.mechanics.GameMechanics;
+import ru.javajava.mechanics.GameMechanicsImpl;
+import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.mechanics.base.Coords;
 import ru.javajava.mechanics.base.UserSnap;
 import ru.javajava.mechanics.internal.ClientSnapService;
 import ru.javajava.mechanics.internal.ServerSnapService;
-import ru.javajava.mechanics.GameSession;
-import ru.javajava.mechanics.avatar.GameUser;
-import ru.javajava.mechanics.base.Coords;
-import ru.javajava.mechanics.base.MyVector;
-import ru.javajava.mechanics.base.ServerPlayerSnap;
-import ru.javajava.mechanics.base.UserSnap;
-import ru.javajava.mechanics.internal.GameSessionService;
 import ru.javajava.model.UserProfile;
 import ru.javajava.services.AccountService;
 import ru.javajava.websocket.RemotePointService;
 
 import java.util.Random;
-
-import java.util.Set;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -62,6 +48,8 @@ public class GameMechanicsTest {
     private ServerSnapService serverSnapService;
     @Autowired
     private ClientSnapService clientSnapService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     private UserProfile user1;
@@ -77,14 +65,14 @@ public class GameMechanicsTest {
     @Test
     public void gameStartedTest () {
         final GameMechanics gameMechanics =
-                new GameMechanicsImpl(accountService, serverSnapService, remotePointService, clientSnapService);
+                new GameMechanicsImpl(accountService, serverSnapService, remotePointService, clientSnapService, objectMapper);
         startGame(user1.getId(), user2.getId(), gameMechanics);
     }
 
     @Test
     public void killingTest() {
         final GameMechanics gameMechanics =
-                new GameMechanicsImpl(accountService, serverSnapService, remotePointService, clientSnapService);
+                new GameMechanicsImpl(accountService, serverSnapService, remotePointService, clientSnapService, objectMapper);
         final GameSession gameSession = startGame(user1.getId(), user2.getId(), gameMechanics);
 
         final UserSnap snapFirstPlayer = new UserSnap();
@@ -125,7 +113,7 @@ public class GameMechanicsTest {
     @Test
     public void sessionsTest() throws AlreadyExistsException {
         final GameMechanics gameMechanics =
-                new GameMechanicsImpl(accountService, serverSnapService, remotePointService, clientSnapService);
+                new GameMechanicsImpl(accountService, serverSnapService, remotePointService, clientSnapService, objectMapper);
         final GameSession gameSession = startGame(user1.getId(), user2.getId(), gameMechanics);
 
         int usersTotal = 2;
