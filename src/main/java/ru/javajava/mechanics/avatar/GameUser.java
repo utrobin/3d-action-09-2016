@@ -17,7 +17,6 @@ public class GameUser {
     public static final int SHOT_REDUCING = 35;
     private boolean wasShot;
     private final Set<Long> victims = new HashSet<>();
-    private int scores;
 
     private int scores = 0;
 

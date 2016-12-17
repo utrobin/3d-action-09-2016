@@ -3,10 +3,7 @@ package ru.javajava.mechanics;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-<<<<<<< HEAD
 import org.springframework.stereotype.Service;
-=======
->>>>>>> 293be5c... Removed rubbish
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.mechanics.base.UserSnap;
 import ru.javajava.mechanics.internal.ClientSnapService;
@@ -48,12 +45,11 @@ public class GameMechanicsImpl implements GameMechanics {
 
 
     public GameMechanicsImpl(AccountService accountService, ServerSnapService serverSnapshotService,
-                             RemotePointService remotePointService,
-                             GameSessionService gameSessionService) {
+                             RemotePointService remotePointService) {
         this.accountService = accountService;
         this.serverSnapshotService = serverSnapshotService;
         this.remotePointService = remotePointService;
-        this.gameSessionService = gameSessionService;
+        this.gameSessionService = new GameSessionService(remotePointService);
         this.clientSnapshotsService = new ClientSnapService();
     }
 
@@ -62,6 +58,11 @@ public class GameMechanicsImpl implements GameMechanics {
     @Override
     public void addClientSnapshot(long userId, UserSnap userSnap) {
         tasks.add(() -> clientSnapshotsService.pushClientSnap(userId, userSnap));
+    }
+
+    @Override
+    public int getSessionsNum() {
+        return gameSessionService.getSessions().size();
     }
 
     @Override

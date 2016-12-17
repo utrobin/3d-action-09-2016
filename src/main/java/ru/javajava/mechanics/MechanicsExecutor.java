@@ -1,25 +1,13 @@
 package ru.javajava.mechanics;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import ru.javajava.mechanics.base.UserSnap;
-import ru.javajava.mechanics.internal.ClientSnapService;
-import ru.javajava.mechanics.internal.ServerSnapService;
-
 import ru.javajava.mechanics.utils.TimeHelper;
-import ru.javajava.services.AccountService;
-import ru.javajava.websocket.RemotePointService;
 
 import javax.annotation.PostConstruct;
 import java.time.Clock;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 
 /**
