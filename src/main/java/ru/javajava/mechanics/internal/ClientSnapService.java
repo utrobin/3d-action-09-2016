@@ -76,7 +76,6 @@ public class ClientSnapService {
             final double distance = enemyCoords.getDistanceBetween(position);
             final double hypotenuse = Math.sqrt(distance*distance + RADIUS*RADIUS);
 
-
             final double maxCos = distance / hypotenuse;
 
             final double cos = currentShot.getCos(idealShot);
@@ -86,7 +85,6 @@ public class ClientSnapService {
         }
         return null;
     }
-
 
     public void clear() {
         userToSnaps.clear();

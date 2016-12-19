@@ -15,7 +15,6 @@ public class GameSession {
     private final Long sessionId;
     private final Set<GameUser> players = new HashSet<>();
 
-    // Максимальное значение игроков в одной комнате
     public static final int MAX_PLAYERS = 16;
 
     public GameSession() {

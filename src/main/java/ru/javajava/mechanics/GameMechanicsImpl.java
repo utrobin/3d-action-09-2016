@@ -1,9 +1,9 @@
 package ru.javajava.mechanics;
-
-import org.json.JSONArray;
+;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.mechanics.base.UserSnap;
 import ru.javajava.mechanics.internal.ClientSnapService;
@@ -22,7 +22,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Created by ivan on 15.11.16.
  */
 @SuppressWarnings({"unused", "FieldMayBeFinal"})
-@Service
 public class GameMechanicsImpl implements GameMechanics {
         private static final Logger LOGGER = LoggerFactory.getLogger(GameMechanicsImpl.class);
 
@@ -42,15 +41,18 @@ public class GameMechanicsImpl implements GameMechanics {
         private ConcurrentLinkedQueue<Long> deleted = new ConcurrentLinkedQueue<>();
 
         private final Queue<Runnable> tasks = new ConcurrentLinkedQueue<>();
+        private final ObjectMapper objectMapper;
 
 
     public GameMechanicsImpl(AccountService accountService, ServerSnapService serverSnapshotService,
-                             RemotePointService remotePointService) {
+                             RemotePointService remotePointService,
+                             ClientSnapService clientSnapService, ObjectMapper objectMapper) {
         this.accountService = accountService;
         this.serverSnapshotService = serverSnapshotService;
         this.remotePointService = remotePointService;
         this.gameSessionService = new GameSessionService(remotePointService);
-        this.clientSnapshotsService = new ClientSnapService();
+        this.clientSnapshotsService = clientSnapService;
+        this.objectMapper = objectMapper;
     }
 
 
@@ -74,13 +76,23 @@ public class GameMechanicsImpl implements GameMechanics {
     }
 
     @Override
-    public void removeUser(long user) {
-        if (!gameSessionService.isPlaying(user)) {
-            return;
-        }
-        deleted.add(user);
+    public boolean hasFreeSlots() {
+        return gameSessionService.hasFreeSlots();
     }
 
+    @Override
+    public boolean removeUser(long user) {
+        if (!gameSessionService.isPlaying(user)) {
+            return false;
+        }
+        deleted.add(user);
+        return true;
+    }
+
+    @Override
+    public boolean isPlaying(long user) {
+        return gameSessionService.isPlaying(user);
+    }
 
     @Override
     public GameSession getSessionForUser(long user) {
@@ -108,7 +120,6 @@ public class GameMechanicsImpl implements GameMechanics {
         }
 
 
-        // Отправка снапшотов
         final Iterator<GameSession> iterator = gameSessionService.getSessions().iterator();
         final Collection<GameSession> sessionsToTerminate = new ArrayList<>();
         while (iterator.hasNext()) {
@@ -123,11 +134,9 @@ public class GameMechanicsImpl implements GameMechanics {
         }
 
 
-        // Удаление вышедших пользователей
         removeLeftUsers();
 
 
-        // Добавление новых игроков в игру
         while (!waiters.isEmpty()) {
             final long candidate = waiters.poll();
             if (!insureCandidate(candidate)) {
@@ -154,11 +163,17 @@ public class GameMechanicsImpl implements GameMechanics {
             leftUsers.add(removedPlayer);
         }
 
-        // Отправка сведений о вышедших юзерах игрокам в каждой связанной сессии
         for (GameSession session : sessionLeftPlayers.keySet()) {
             final List<Long> playersLeft = sessionLeftPlayers.get(session);
-            final JSONArray jsonArray = new JSONArray(playersLeft);
-            final Message message = new Message(Message.REMOVE_USER, jsonArray.toString());
+            final String jsonArray;
+            try {
+                jsonArray = objectMapper.writeValueAsString(playersLeft);
+            }
+            catch (JsonProcessingException e) {
+                LOGGER.error("Error serializing!");
+                continue;
+            }
+            final Message message = new Message(Message.REMOVE_USER, jsonArray);
             for (GameUser user : session.getPlayers()) {
                 try {
                     remotePointService.sendMessageToUser(user.getId(), message);
@@ -171,6 +186,11 @@ public class GameMechanicsImpl implements GameMechanics {
 
     @Override
     public void reset() {
-
+        final Set<GameSession> sessions = gameSessionService.getSessions();
+        for (GameSession session: sessions) {
+            gameSessionService.notifyGameIsOver(session);
+        }
     }
 }
+
+

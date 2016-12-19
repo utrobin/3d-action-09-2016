@@ -2,7 +2,6 @@ package ru.javajava.mechanics.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;
@@ -17,7 +16,7 @@ import java.util.Set;
 /**
  * Created by ivan on 15.11.16.
  */
-@Service
+
 public class GameSessionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GameSessionService.class);
     private final Map<Long, GameSession> usersMap = new HashMap<>();
@@ -34,6 +33,15 @@ public class GameSessionService {
         return gameSessions;
     }
 
+    public boolean hasFreeSlots() {
+        for (GameSession session: gameSessions) {
+            if (!session.isFull()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public GameSession getSessionForUser(long userId) {
         return usersMap.get(userId);
@@ -42,8 +50,6 @@ public class GameSessionService {
     public boolean isPlaying(long userId) {
         return usersMap.containsKey(userId);
     }
-
-
 
     public void addNewPlayer (UserProfile user) {
         for (GameSession session: gameSessions) {
@@ -55,6 +61,7 @@ public class GameSessionService {
                 return;
             }
         }
+
         final GameSession newSession = new GameSession();
         newSession.addPlayer(user);
         gameSessions.add(newSession);
@@ -73,7 +80,7 @@ public class GameSessionService {
         LOGGER.info("--------------------------------------------------------");
         LOGGER.info("Player #{} was removed from room #{} (players here: {})", userId, session.getId(), session.getPlayers().size());
         if (session.isEmpty()) {
-            notifyGameIsOver(session);  // Завершение текущей игры
+            notifyGameIsOver(session);
         }
     }
 

@@ -22,6 +22,7 @@ public class ServerPlayerSnap {
     @JsonProperty("scores")
     private int scores;
 
+
     public Coords getPosition() {
         return position;
     }
