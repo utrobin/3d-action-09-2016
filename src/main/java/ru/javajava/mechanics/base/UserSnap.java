@@ -1,21 +1,13 @@
 package ru.javajava.mechanics.base;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Created by ivan on 14.11.16.
  */
 public class UserSnap {
-    @JsonProperty("id")
     private long id;
-    @JsonProperty("position")
     private Coords position;
-
-    @JsonProperty("camera")
     private Coords camera;
-
-    @JsonProperty("firing")
     private boolean firing;
 
     public long getId() {

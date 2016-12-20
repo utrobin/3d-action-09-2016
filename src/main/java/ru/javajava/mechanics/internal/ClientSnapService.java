@@ -18,13 +18,12 @@ public class ClientSnapService {
 
     private static final int RADIUS = 3;
 
-    public void pushClientSnap(long user, UserSnap snap) {
-        userToSnaps.putIfAbsent(user, new ArrayList<>());
-        final List<UserSnap> userSnaps = userToSnaps.get(user);
+    public synchronized void pushClientSnap(long user, UserSnap snap) {
+        final List<UserSnap> userSnaps = userToSnaps.computeIfAbsent(user, u -> new ArrayList<>());
         userSnaps.add(snap);
     }
 
-    public List<UserSnap> getSnapsForUser(long user) {
+    public synchronized List<UserSnap> getSnapsForUser(long user) {
         return userToSnaps.get(user);
     }
 

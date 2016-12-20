@@ -7,7 +7,6 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import ru.javajava.mechanics.MechanicsExecutor;
 import ru.javajava.mechanics.requests.Disconnect;
 import ru.javajava.mechanics.requests.JoinGame;
 import ru.javajava.model.UserProfile;

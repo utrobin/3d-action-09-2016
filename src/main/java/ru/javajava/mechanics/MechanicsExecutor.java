@@ -48,12 +48,12 @@ public class MechanicsExecutor {
 
     private final ExecutorService tickExecutors = Executors.newFixedThreadPool(THREADS_NUM, threadFactory);
 
-    private final GameMechanics[] gameMechanics = new GameMechanicsImpl[THREADS_NUM];
+    private final GameMechanics[] gameMechanics = new GameMechanics[THREADS_NUM];
 
     @PostConstruct
     public void initAfterStartup() {
         for (int i = 0; i < gameMechanics.length; ++i) {
-            gameMechanics[i] = new GameMechanicsImpl(accountService,
+            gameMechanics[i] = new GameMechanics(accountService,
                     serverSnapshotService, remotePointService, clientSnapshotsService, objectMapper);
             final Runnable worker = new Worker(gameMechanics[i]);
             tickExecutors.execute(worker);

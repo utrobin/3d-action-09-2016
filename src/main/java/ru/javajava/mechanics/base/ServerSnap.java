@@ -1,7 +1,5 @@
 package ru.javajava.mechanics.base;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 /**
@@ -9,7 +7,6 @@ import java.util.List;
  */
 public class ServerSnap {
 
-    @JsonProperty("shot")
     boolean shot;
     List<ServerPlayerSnap> players;
 

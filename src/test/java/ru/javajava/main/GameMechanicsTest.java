@@ -13,7 +13,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javajava.exceptions.AlreadyExistsException;
 import ru.javajava.mechanics.GameMechanics;
-import ru.javajava.mechanics.GameMechanicsImpl;
 import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.mechanics.base.Coords;
@@ -65,14 +64,14 @@ public class GameMechanicsTest {
     @Test
     public void gameStartedTest () {
         final GameMechanics gameMechanics =
-                new GameMechanicsImpl(accountService, serverSnapService, remotePointService, clientSnapService, objectMapper);
+                new GameMechanics(accountService, serverSnapService, remotePointService, clientSnapService, objectMapper);
         startGame(user1.getId(), user2.getId(), gameMechanics);
     }
 
     @Test
     public void killingTest() {
         final GameMechanics gameMechanics =
-                new GameMechanicsImpl(accountService, serverSnapService, remotePointService, clientSnapService, objectMapper);
+                new GameMechanics(accountService, serverSnapService, remotePointService, clientSnapService, objectMapper);
         final GameSession gameSession = startGame(user1.getId(), user2.getId(), gameMechanics);
 
         final UserSnap snapFirstPlayer = new UserSnap();
@@ -113,7 +112,7 @@ public class GameMechanicsTest {
     @Test
     public void sessionsTest() throws AlreadyExistsException {
         final GameMechanics gameMechanics =
-                new GameMechanicsImpl(accountService, serverSnapService, remotePointService, clientSnapService, objectMapper);
+                new GameMechanics(accountService, serverSnapService, remotePointService, clientSnapService, objectMapper);
         final GameSession gameSession = startGame(user1.getId(), user2.getId(), gameMechanics);
 
         int usersTotal = 2;

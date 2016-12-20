@@ -8,10 +8,10 @@ import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.model.UserProfile;
 import ru.javajava.websocket.RemotePointService;
 
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by ivan on 15.11.16.
@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class GameSessionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GameSessionService.class);
-    private final Map<Long, GameSession> usersMap = new HashMap<>();
+    private final Map<Long, GameSession> usersMap = new ConcurrentHashMap<>();
     private final Set<GameSession> gameSessions = new LinkedHashSet<>();
 
     private final RemotePointService remotePointService;

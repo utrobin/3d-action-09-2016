@@ -1,18 +1,12 @@
 package ru.javajava.Responses;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Администратор on 20.11.2016.
  */
-public class BestUsersResponse implements Serializable {
-    @JsonProperty("pages")
+public class BestUsersResponse {
     private int pages;
-
-    @JsonProperty("users")
     private List<User> users;
 
     public BestUsersResponse(int pages, List<User> users) {
@@ -21,21 +15,18 @@ public class BestUsersResponse implements Serializable {
     }
 
     public static class User {
-        @JsonProperty("id")
-        private long number;
-        @JsonProperty("login")
+        private long id;
         private String login;
-        @JsonProperty("rating")
         private int rating;
 
-        public User(String login, int rating, long number) {
+        public User(String login, int rating, long id) {
             this.login = login;
             this.rating = rating;
-            this.number = number;
+            this.id = id;
         }
 
         public long getNumber() {
-            return number;
+            return id;
         }
 
         public String getLogin() {

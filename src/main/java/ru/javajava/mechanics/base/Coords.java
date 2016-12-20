@@ -1,6 +1,5 @@
 package ru.javajava.mechanics.base;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,11 +16,8 @@ public class Coords {
         this.z = z;
     }
 
-    @JsonProperty("x")
     public  double x;
-    @JsonProperty("y")
     public  double y;
-    @JsonProperty("z")
     public  double z;
 
 

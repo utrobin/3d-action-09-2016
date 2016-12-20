@@ -97,7 +97,7 @@ public class UserDAO {
         }
     }
 
-    
+
 
     public ResultBean getBestUsers(int page, int limit) throws EmptyResultDataAccessException {
         if (numPagesCached.get() == -1) {
