@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by ivan on 24.10.16.
@@ -26,7 +27,7 @@ import java.util.Map;
 public class UserDAO {
 
     private final JdbcTemplate template;
-    private int numPagesCached = -1;
+    private final AtomicInteger numPagesCached = new AtomicInteger(-1);
 
     @SuppressWarnings("unused")
     public UserDAO(JdbcTemplate template) {
@@ -51,13 +52,13 @@ public class UserDAO {
         template.update(new UserPstCreator(user), keyHolder);
         final Map<String, Object> keys = keyHolder.getKeys();
         user.setId((Long)keys.get("GENERATED_KEY"));
-        numPagesCached = -1;
+        numPagesCached.set(-1);
         return user;
     }
 
     public int removeUser (long id) {
+        numPagesCached.set(-1);
         final String query = "DELETE FROM user WHERE id = ?;";
-        numPagesCached = -1;
         return template.update(query, id);
     }
 
@@ -96,18 +97,18 @@ public class UserDAO {
         }
     }
 
-
+    
 
     public ResultBean getBestUsers(int page, int limit) throws EmptyResultDataAccessException {
-        if (numPagesCached == -1) {
+        if (numPagesCached.get() == -1) {
             final String count = "SELECT count(*) FROM user;";
             final int numRows = template.queryForObject(count, Integer.class);
-            numPagesCached = numRows / limit + 1;
+            numPagesCached.set(numRows / limit + 1);
         }
         final int offset = limit * (page - 1);
         final String query = "SELECT * FROM user ORDER BY rating DESC LIMIT ? OFFSET ?;";
         final List<UserProfile> users = template.query(query, userMapper, limit, offset);
-        return new ResultBean(users, numPagesCached);
+        return new ResultBean(users, numPagesCached.get());
     }
 
     private static class UserPstCreator implements PreparedStatementCreator {
@@ -115,6 +116,7 @@ public class UserDAO {
         UserPstCreator(UserProfile user) {
             this.user = user;
         }
+        @Override
         public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
             final String query = "INSERT INTO user (login, password, email) VALUES (?,?,?);";
             final PreparedStatement pst = con.prepareStatement(query,
