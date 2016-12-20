@@ -1,9 +1,6 @@
 package ru.javajava.mechanics;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.base.UserSnap;
@@ -15,8 +12,6 @@ import ru.javajava.websocket.RemotePointService;
 
 import javax.annotation.PostConstruct;
 import java.time.Clock;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -42,9 +37,14 @@ public class MechanicsExecutor {
     private static final long STEP_TIME = 30;
     private static final int THREADS_NUM = 4;
 
-    private final ThreadFactory threadFactory = new ThreadFactoryBuilder()
-            .setNameFormat("Game-механикa")
-            .build();
+    private final ThreadFactory threadFactory = new ThreadFactory(){
+        @Override
+        public Thread newThread(Runnable r) {
+            final Thread thread = new Thread(r);
+            thread.setName("Game-mechanic");
+            return thread;
+        };
+    };
 
     private final ExecutorService tickExecutors = Executors.newFixedThreadPool(THREADS_NUM, threadFactory);
 
