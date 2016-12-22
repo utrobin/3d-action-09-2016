@@ -13,6 +13,7 @@ import java.util.Set;
 public class ServerPlayerSnap {
     @JsonProperty("id")
     private long userId;
+    private String login;
     private Coords position;
     private int hp;
     private final Set<Long> victims = new HashSet<>();
@@ -57,5 +58,13 @@ public class ServerPlayerSnap {
 
     public void setScores(int scores) {
         this.scores = scores;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 }

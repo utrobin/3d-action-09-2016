@@ -56,6 +56,7 @@ public class GameUser {
         result.setHp(hp);
         result.setVictims(victims);
         result.setScores(scores);
+        result.setLogin(userProfile.getLogin());
         victims.clear();
         return result;
     }
