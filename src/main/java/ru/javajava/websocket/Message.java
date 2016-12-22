@@ -6,9 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Created by ivan on 14.11.16.
  */
 public class Message {
-    @JsonProperty("type")
     private String type;
-    @JsonProperty("data")
     private String data;
 
     public static final String INITIALIZE_USER = "InitializePlayer";
