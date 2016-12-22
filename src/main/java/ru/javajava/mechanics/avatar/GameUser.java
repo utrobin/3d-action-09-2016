@@ -83,7 +83,11 @@ public class GameUser {
         return wasShot;
     }
 
-    public void setFullHealth() {
+    public int getHp() {
+        return hp;
+    }
+
+    private void setFullHealth() {
         hp = 100;
     }
 
