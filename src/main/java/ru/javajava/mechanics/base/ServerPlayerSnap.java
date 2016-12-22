@@ -16,7 +16,7 @@ public class ServerPlayerSnap {
     private String login;
     private Coords position;
     private int hp;
-    private final Set<Long> victims = new HashSet<>();
+    private final Set<VictimModel> victims = new HashSet<>();
     private int scores;
 
 
@@ -44,11 +44,11 @@ public class ServerPlayerSnap {
         this.hp = hp;
     }
 
-    public Set<Long> getVictims() {
+    public Set<VictimModel> getVictims() {
         return victims;
     }
 
-    public void setVictims(Collection<Long> victims) {
+    public void setVictims(Collection<VictimModel> victims) {
         this.victims.addAll(victims);
     }
 

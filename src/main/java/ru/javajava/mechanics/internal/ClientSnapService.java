@@ -6,6 +6,7 @@ import ru.javajava.mechanics.avatar.GameUser;
 import ru.javajava.mechanics.base.Coords;
 import ru.javajava.mechanics.base.MyVector;
 import ru.javajava.mechanics.base.UserSnap;
+import ru.javajava.mechanics.base.VictimModel;
 
 import java.util.*;
 
@@ -45,7 +46,9 @@ public class ClientSnapService {
                 if (victim != null) {
                     victim.markShot();
                     if (!victim.isAlive()) {
-                        player.addVictim(victim.getId());
+                        final VictimModel model =
+                                new VictimModel(victim.getId(), victim.getUserProfile().getLogin());
+                        player.addVictim(model);
                     }
                 }
             }

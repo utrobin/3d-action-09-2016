@@ -2,6 +2,7 @@ package ru.javajava.mechanics.avatar;
 
 import ru.javajava.mechanics.base.Coords;
 import ru.javajava.mechanics.base.ServerPlayerSnap;
+import ru.javajava.mechanics.base.VictimModel;
 import ru.javajava.model.UserProfile;
 
 import java.util.HashSet;
@@ -16,7 +17,7 @@ public class GameUser {
     private int hp = 100;
     public static final int SHOT_REDUCING = 35;
     private boolean wasShot;
-    private final Set<Long> victims = new HashSet<>();
+    private final Set<VictimModel> victims = new HashSet<>();
 
     private int scores = 0;
 
@@ -73,7 +74,7 @@ public class GameUser {
         }
     }
 
-    public void addVictim (long victim) {
+    public void addVictim (VictimModel victim) {
         victims.add(victim);
         scores++;
     }
