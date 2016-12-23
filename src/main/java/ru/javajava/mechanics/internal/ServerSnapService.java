@@ -37,12 +37,11 @@ public class ServerSnapService {
             playersSnaps.add(serverPlayerSnap);
         }
 
-        final ServerSnap snap = new ServerSnap();
-
         if (playersSnaps.isEmpty()) {
             throw new RuntimeException("No players snaps");
         }
 
+        final ServerSnap snap = new ServerSnap();
         snap.setPlayers(playersSnaps);
         try {
             final Message message = new Message();
@@ -50,6 +49,8 @@ public class ServerSnapService {
             for (GameUser player : players) {
                 final boolean wasShot = player.getShot();
                 snap.setShot(wasShot);
+                final int hp = player.getHp();
+                snap.setHp(hp);
                 message.setData(objectMapper.writeValueAsString(snap));
                 remotePointService.sendMessageToUser(player.getId(), message);
                 player.resetForNextSnap();

@@ -7,8 +7,9 @@ import java.util.List;
  */
 public class ServerSnap {
 
-    boolean shot;
-    List<ServerPlayerSnap> players;
+    private boolean shot;
+    private int hp;
+    private List<ServerPlayerSnap> players;
 
     public List<ServerPlayerSnap> getPlayers() {
         return players;
@@ -24,5 +25,13 @@ public class ServerSnap {
 
     public void setShot(boolean shot) {
         this.shot = shot;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
     }
 }
