@@ -66,9 +66,9 @@ public class GameUser {
         return hp > 0;
     }
 
-    public void markShot() {
+    public void markShot(double coefficient) {
         wasShot = true;
-        hp -= SHOT_REDUCING;
+        hp -= SHOT_REDUCING * coefficient;
         if (hp < 0) {
             hp = 0;
         }

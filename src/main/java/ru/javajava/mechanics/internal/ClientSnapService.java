@@ -1,5 +1,7 @@
 package ru.javajava.mechanics.internal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;
@@ -15,7 +17,9 @@ import java.util.*;
  */
 @Service
 public class ClientSnapService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientSnapService.class);
     private final Map<Long, List<UserSnap>> userToSnaps = new HashMap<>();
+    private double damageCoeff;
 
     private static final int RADIUS = 3;
 
@@ -44,7 +48,8 @@ public class ClientSnapService {
                 }
                 final GameUser victim = processFiring (snap, players);
                 if (victim != null) {
-                    victim.markShot();
+                    LOGGER.info("SHOOTED! Damage: {}", damageCoeff * GameUser.SHOT_REDUCING);
+                    victim.markShot(damageCoeff);
                     if (!victim.isAlive()) {
                         final VictimModel model =
                                 new VictimModel(victim.getId(), victim.getUserProfile().getLogin());
@@ -82,6 +87,7 @@ public class ClientSnapService {
 
             final double cos = currentShot.getCos(idealShot);
             if (cos >= maxCos) {
+                damageCoeff = cos;
                 return player;
             }
         }
