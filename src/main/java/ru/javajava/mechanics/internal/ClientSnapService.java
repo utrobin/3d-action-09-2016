@@ -57,7 +57,7 @@ public class ClientSnapService {
                 final GameUser victim = processFiring (snap, players);
                 if (victim != null) {
                     accountService.incrementRating(player.getId(), SCORES_FOR_SHOT);
-                    LOGGER.info("SHOOTED! Damage: {}", damageCoeff * GameUser.SHOT_REDUCING);
+                    LOGGER.info("Damage: {}", damageCoeff * GameUser.SHOT_REDUCING);
 
                     victim.markShot(damageCoeff);
                     if (!victim.isAlive()) {
@@ -98,7 +98,10 @@ public class ClientSnapService {
 
             final double cos = currentShot.getCos(idealShot);
             if (cos >= maxCos) {
-                damageCoeff = cos;
+                double shotLenght = distance / cos;
+                double distanceFromEnemyCenter = Math.sqrt(shotLenght*shotLenght - distance*distance);
+                LOGGER.info("SHOOTED! Distance from center enemy: {}", distanceFromEnemyCenter);
+                damageCoeff = distanceFromEnemyCenter / RADIUS;
                 return player;
             }
         }
