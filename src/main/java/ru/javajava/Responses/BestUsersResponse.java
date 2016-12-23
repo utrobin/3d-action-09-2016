@@ -36,5 +36,37 @@ public class BestUsersResponse {
         public int getRating() {
             return rating;
         }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public void setLogin(String login) {
+            this.login = login;
+        }
+
+        public void setRating(int rating) {
+            this.rating = rating;
+        }
+    }
+
+    public int getPages() {
+        return pages;
+    }
+
+    public void setPages(int pages) {
+        this.pages = pages;
+    }
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 }
