@@ -29,6 +29,7 @@ public class ClientSnapService {
     private static final int RADIUS = 3;
     public static final int SCORES_FOR_SHOT = 2;
     public static final int SCORES_FOR_KILL = 10;
+    public static final double DAMAGE_COEFF_MIN = 0.5;
 
 
     public synchronized void pushClientSnap(long user, UserSnap snap) {
@@ -57,7 +58,7 @@ public class ClientSnapService {
                 final GameUser victim = processFiring (snap, players);
                 if (victim != null) {
                     accountService.incrementRating(player.getId(), SCORES_FOR_SHOT);
-                    LOGGER.info("Damage: {}", damageCoeff * GameUser.SHOT_REDUCING);
+                    LOGGER.info("SHOOTED! Damage: {}", damageCoeff * GameUser.SHOT_REDUCING);
 
                     victim.markShot(damageCoeff);
                     if (!victim.isAlive()) {
@@ -101,8 +102,11 @@ public class ClientSnapService {
                 final double shotLenght = distance / cos;
                 final double distanceFromEnemyCenter =
                         Math.sqrt(shotLenght*shotLenght - distance*distance);
-                LOGGER.info("SHOOTED! Distance from center enemy: {}", distanceFromEnemyCenter);
+                
                 damageCoeff = (RADIUS - distanceFromEnemyCenter) / RADIUS;
+                if (damageCoeff < DAMAGE_COEFF_MIN) {
+                    damageCoeff = DAMAGE_COEFF_MIN;
+                }
                 return player;
             }
         }
