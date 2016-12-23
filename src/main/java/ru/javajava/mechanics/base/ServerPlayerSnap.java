@@ -17,7 +17,8 @@ public class ServerPlayerSnap {
     private Coords position;
     private int hp;
     private final Set<VictimModel> victims = new HashSet<>();
-    private int scores;
+    private int kills;
+    private int deaths;
 
 
     public Coords getPosition() {
@@ -52,12 +53,20 @@ public class ServerPlayerSnap {
         this.victims.addAll(victims);
     }
 
-    public int getScores() {
-        return scores;
+    public int getKills() {
+        return kills;
     }
 
-    public void setScores(int scores) {
-        this.scores = scores;
+    public void setKills(int kills) {
+        this.kills = kills;
+    }
+
+    public int getDeaths() {
+        return deaths;
+    }
+
+    public void setDeaths(int deaths) {
+        this.deaths = deaths;
     }
 
     public String getLogin() {

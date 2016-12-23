@@ -100,13 +100,13 @@ public class GameMechanicsTest {
         final GameUser player2 = gameSession.getPlayers().stream()
                 .filter(x -> x.getId() == user2.getId()).findFirst().get();
 
-        Assert.assertEquals("There should be no kills yet!", 0, player2.getScores());
+        Assert.assertEquals("There should be no kills yet!", 0, player2.getKills());
 
         gameMechanics.addClientSnapshot(user2.getId(), snapSecondPlayer);
         gameMechanics.addClientSnapshot(user2.getId(), snapSecondPlayer);
         gameMechanics.gmStep(5);
 
-        Assert.assertEquals("Player 1 should be killed by player 2!", 1, player2.getScores());
+        Assert.assertEquals("Player 1 should be killed by player 2!", 1, player2.getKills());
     }
 
     @Test

@@ -19,7 +19,8 @@ public class GameUser {
     private boolean wasShot;
     private final Set<VictimModel> victims = new HashSet<>();
 
-    private int scores = 0;
+    private int kills = 0;
+    private int deaths = 0;
 
     public GameUser(UserProfile userProfile) {
         this.userProfile = userProfile;
@@ -56,7 +57,8 @@ public class GameUser {
         result.setPosition(position);
         result.setHp(hp);
         result.setVictims(victims);
-        result.setScores(scores);
+        result.setKills(kills);
+        result.setDeaths(deaths);
         result.setLogin(userProfile.getLogin());
         victims.clear();
         return result;
@@ -71,12 +73,13 @@ public class GameUser {
         hp -= SHOT_REDUCING * coefficient;
         if (hp < 0) {
             hp = 0;
+            deaths++;
         }
     }
 
     public void addVictim (VictimModel victim) {
         victims.add(victim);
-        scores++;
+        kills++;
     }
 
     public boolean getShot() {
@@ -91,14 +94,13 @@ public class GameUser {
         hp = 100;
     }
 
-    public void addScore() {
-        scores++;
+    public int getKills() {
+        return kills;
     }
 
-    public int getScores() {
-        return scores;
+    public int getDeaths() {
+        return deaths;
     }
-
 
     @Override
     public boolean equals(Object o) {

@@ -47,10 +47,11 @@ public class ServerSnapService {
             final Message message = new Message();
             message.setType(Message.SNAPSHOT);
             for (GameUser player : players) {
-                final boolean wasShot = player.getShot();
-                snap.setShot(wasShot);
-                final int hp = player.getHp();
-                snap.setHp(hp);
+                snap.setShot(player.getShot());
+                snap.setHp(player.getHp());
+                snap.setKills(player.getHp());
+                snap.setDeaths(player.getHp());
+
                 message.setData(objectMapper.writeValueAsString(snap));
                 remotePointService.sendMessageToUser(player.getId(), message);
                 player.resetForNextSnap();
