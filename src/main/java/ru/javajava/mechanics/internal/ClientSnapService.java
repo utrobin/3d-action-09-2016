@@ -98,10 +98,11 @@ public class ClientSnapService {
 
             final double cos = currentShot.getCos(idealShot);
             if (cos >= maxCos) {
-                double shotLenght = distance / cos;
-                double distanceFromEnemyCenter = Math.sqrt(shotLenght*shotLenght - distance*distance);
+                final double shotLenght = distance / cos;
+                final double distanceFromEnemyCenter =
+                        Math.sqrt(shotLenght*shotLenght - distance*distance);
                 LOGGER.info("SHOOTED! Distance from center enemy: {}", distanceFromEnemyCenter);
-                damageCoeff = distanceFromEnemyCenter / RADIUS;
+                damageCoeff = (RADIUS - distanceFromEnemyCenter) / RADIUS;
                 return player;
             }
         }
