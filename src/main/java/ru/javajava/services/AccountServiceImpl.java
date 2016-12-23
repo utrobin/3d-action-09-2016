@@ -67,6 +67,10 @@ public class AccountServiceImpl implements AccountService {
         userDAO.incrementRating(userId);
     }
 
+    @Override
+    public void incrementRating(long userId, int value) {
+        userDAO.incrementRating(userId, value);
+    }
 
     @Override
     public UserDAO.ResultBean getBestUsers(int page, int limit) {

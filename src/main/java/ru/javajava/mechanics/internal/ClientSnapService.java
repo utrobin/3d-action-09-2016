@@ -2,6 +2,7 @@ package ru.javajava.mechanics.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;
@@ -9,6 +10,7 @@ import ru.javajava.mechanics.base.Coords;
 import ru.javajava.mechanics.base.MyVector;
 import ru.javajava.mechanics.base.UserSnap;
 import ru.javajava.mechanics.base.VictimModel;
+import ru.javajava.services.AccountService;
 
 import java.util.*;
 
@@ -21,7 +23,13 @@ public class ClientSnapService {
     private final Map<Long, List<UserSnap>> userToSnaps = new HashMap<>();
     private double damageCoeff;
 
+    @Autowired
+    private AccountService accountService;
+
     private static final int RADIUS = 3;
+    public static final int SCORES_FOR_SHOT = 2;
+    public static final int SCORES_FOR_KILL = 10;
+
 
     public synchronized void pushClientSnap(long user, UserSnap snap) {
         final List<UserSnap> userSnaps = userToSnaps.computeIfAbsent(user, u -> new ArrayList<>());
@@ -48,12 +56,15 @@ public class ClientSnapService {
                 }
                 final GameUser victim = processFiring (snap, players);
                 if (victim != null) {
+                    accountService.incrementRating(player.getId(), SCORES_FOR_SHOT);
                     LOGGER.info("SHOOTED! Damage: {}", damageCoeff * GameUser.SHOT_REDUCING);
+
                     victim.markShot(damageCoeff);
                     if (!victim.isAlive()) {
                         final VictimModel model =
                                 new VictimModel(victim.getId(), victim.getUserProfile().getLogin());
                         player.addVictim(model);
+                        accountService.incrementRating(player.getId(), SCORES_FOR_KILL);
                     }
                 }
             }

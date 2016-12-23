@@ -90,8 +90,12 @@ public class UserDAO {
     }
 
     public void incrementRating(long userId) throws EmptyResultDataAccessException {
-        final String query = "UPDATE user SET rating = rating + 1 WHERE id = ?;";
-        final int affectedRows = template.update(query, userId);
+        this.incrementRating(userId, 1);
+    }
+
+    public void incrementRating(long userId, int value) throws EmptyResultDataAccessException {
+        final String query = "UPDATE user SET rating = rating + ? WHERE id = ?;";
+        final int affectedRows = template.update(query, value, userId);
         if (affectedRows == 0) {
             throw new EmptyResultDataAccessException("User not found", 1);
         }

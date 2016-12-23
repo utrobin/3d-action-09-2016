@@ -16,4 +16,5 @@ public interface AccountService {
     void incrementVisits(long userId);
     void setRating(long userId, int rating);
     void incrementRating(long userId);
+    void incrementRating(long userId, int value);
 }
