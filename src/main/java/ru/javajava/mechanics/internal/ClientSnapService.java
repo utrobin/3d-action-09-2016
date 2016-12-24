@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.GameSession;
 import ru.javajava.mechanics.avatar.GameUser;
-import ru.javajava.mechanics.base.Coords;
-import ru.javajava.mechanics.base.MyVector;
-import ru.javajava.mechanics.base.UserSnap;
-import ru.javajava.mechanics.base.VictimModel;
+import ru.javajava.mechanics.base.*;
 import ru.javajava.services.AccountService;
 
 import java.util.*;
@@ -25,6 +22,8 @@ public class ClientSnapService {
 
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private BlockService blockService;
 
     private static final int RADIUS = 3;
     public static final int SCORES_FOR_SHOT = 2;
@@ -58,8 +57,6 @@ public class ClientSnapService {
                 final GameUser victim = processFiring (snap, players);
                 if (victim != null) {
                     accountService.incrementRating(player.getId(), SCORES_FOR_SHOT);
-                    LOGGER.info("SHOOTED! Damage: {}", damageCoeff * GameUser.SHOT_REDUCING);
-
                     victim.markShot(damageCoeff);
                     if (!victim.isAlive()) {
                         final VictimModel model =
@@ -75,7 +72,7 @@ public class ClientSnapService {
 
 
     private GameUser processFiring(UserSnap snap, Iterable<GameUser> players) {
-        final Coords position = snap.getPosition();
+        final Coords myPosition = snap.getPosition();
 
         final Coords cameraDirection  = snap.getCamera();
         final MyVector currentShot = new MyVector(cameraDirection);
@@ -84,21 +81,23 @@ public class ClientSnapService {
             if (player.getId() == snap.getId()) {
                 continue;
             }
-            final Coords enemyCoords = player.getPosition();
-            if (enemyCoords == null) {
+            final Coords enemyPosition = player.getPosition();
+            if (enemyPosition == null) {
                 continue;
             }
 
-            final MyVector idealShot = new MyVector(enemyCoords.subtract(position));
+            final MyVector idealShot = new MyVector(enemyPosition.subtract(myPosition));
 
-
-            final double distance = enemyCoords.getDistanceBetween(position);
+            final double distance = enemyPosition.getDistanceBetween(myPosition);
             final double hypotenuse = Math.sqrt(distance*distance + RADIUS*RADIUS);
 
             final double maxCos = distance / hypotenuse;
 
             final double cos = currentShot.getCos(idealShot);
             if (cos >= maxCos) {
+                if (!noWallsBetween(myPosition, enemyPosition, currentShot)) {
+                    continue;
+                }
                 final double shotLenght = distance / cos;
                 final double distanceFromEnemyCenter =
                         Math.sqrt(shotLenght*shotLenght - distance*distance);
@@ -111,6 +110,25 @@ public class ClientSnapService {
             }
         }
         return null;
+    }
+
+    private boolean noWallsBetween(Coords killer, Coords enemy, MyVector camera) {
+        final List<Block> blocks = blockService.getBlocks();
+        for (Block block: blocks) {
+            LOGGER.info("------------------------------------");
+            LOGGER.info("Сamera: ({}, {}, {})", camera.getX(), camera.getY(), camera.getZ());
+            LOGGER.info("Player: ({}, {}, {})", killer.x, killer.y, killer.z);
+            Ray shotRay = new Ray(camera, killer);
+            Double distanceToBlock = block.isOnTheWay(shotRay);
+            if (distanceToBlock != null) {
+                LOGGER.info("ON THE WAY");
+                double distanceToEnemy = killer.getDistanceBetween(enemy);
+                if (distanceToBlock < distanceToEnemy) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public void clear() {
