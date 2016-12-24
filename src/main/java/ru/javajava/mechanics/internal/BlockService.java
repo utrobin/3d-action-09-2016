@@ -4,8 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.javajava.mechanics.base.Block;
 import ru.javajava.mechanics.base.Coords;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by ivan on 23.12.16.
@@ -14,65 +13,130 @@ import java.util.List;
 @Service
 @SuppressWarnings("MagicNumber")
 public class BlockService {
-    private final List<Block> blocks = new ArrayList<>();
+    private final Set<Block> blocks = new HashSet<>();
 
     public BlockService() {
-        Coords center = new Coords(100, 15, 40);
-        Block block = new Block(center);
-        block.setxLength(20);
-        block.setyLength(30);
-        block.setzLength(60);
-        blocks.add(block);
+        blocks.add(firstBlock());
+        blocks.addAll(fourTowers());
+        blocks.addAll(centralBackBlocks());
+        blocks.addAll(centralBlocksOnBlocks());
     }
 
-    public List<Block> getBlocks() {
+    public Set<Block> getBlocks() {
         return blocks;
     }
 
-    public List<Coords> getCorners(Block block) {
-        Coords center = block.getCenter();
-        double xLen = block.getxLength();
-        double zLen = block.getzLength();
 
-        Coords A = new Coords(center.x + (xLen / 2), 0, center.z + (zLen / 2));
-        Coords B = new Coords(center.x - (xLen / 2), 0, center.z - (zLen / 2));
-        Coords C = new Coords(center.x + (xLen / 2), 0, center.z - (zLen / 2));
-        Coords D = new Coords(center.x - (xLen / 2), 0, center.z + (zLen / 2));
-        List<Coords> points = new ArrayList<>();
-        points.add(A);
-        points.add(B);
-        points.add(C);
-        points.add(D);
-        return points;
+    private Block firstBlock() {
+        Coords center = new Coords(0, 8, 0);
+        Block block = new Block(center);
+        block.setxLength(100);
+        block.setyLength(16);
+        block.setzLength(100);
+        return block;
     }
 
-    public List<Coords> getEdgePoints (Block block, Coords player) {
-        List<Coords> allPoints = getCorners(block);
+    private Set<Block> fourTowers() {
+        Set<Block> result = new HashSet<>();
 
-        Coords closerPoint = allPoints.get(0);
-        double minDistance = player.getDistanceBetween(closerPoint);
-        int herIndex = 0;
-        for (int i = 1; i < allPoints.size(); ++i) {
-            Coords point = allPoints.get(i);
-            double distance = player.getDistanceBetween(point);
-            if (distance < minDistance) {
-                minDistance = distance;
-                herIndex = i;
-                closerPoint = point;
-            }
-        }
+        Coords center = new Coords(300, 35, 300);
+        Block block = new Block(center);
+        block.setxLength(200);
+        block.setyLength(70);
+        block.setzLength(200);
+        result.add(block);
 
-        List<Coords> result = new ArrayList<>();
+        center = new Coords(-300, 35, 300);
+        block = new Block(center);
+        block.setxLength(200);
+        block.setyLength(70);
+        block.setzLength(200);
+        result.add(block);
 
-        if (herIndex <= 1) {
-            result.add(allPoints.get(2));
-            result.add(allPoints.get(3));
-            return result;
-        }
+        center = new Coords(300, 35, -300);
+        block = new Block(center);
+        block.setxLength(200);
+        block.setyLength(70);
+        block.setzLength(200);
+        result.add(block);
 
-        result.add(allPoints.get(0));
-        result.add(allPoints.get(1));
+        center = new Coords(-300, 35, -300);
+        block = new Block(center);
+        block.setxLength(200);
+        block.setyLength(70);
+        block.setzLength(200);
+        result.add(block);
         return result;
     }
+
+    private Set<Block> centralBackBlocks() {
+        Set<Block> result = new HashSet<>();
+
+        Coords center = new Coords(300, 8, 0);
+        Block block = new Block(center);
+        block.setxLength(200);
+        block.setyLength(16);
+        block.setzLength(200);
+        result.add(block);
+
+        center = new Coords(-300, 8, 0);
+        block = new Block(center);
+        block.setxLength(200);
+        block.setyLength(16);
+        block.setzLength(200);
+        result.add(block);
+
+        center = new Coords(0, 8, 300);
+        block = new Block(center);
+        block.setxLength(200);
+        block.setyLength(16);
+        block.setzLength(200);
+        result.add(block);
+
+        center = new Coords(0, 8, -300);
+        block = new Block(center);
+        block.setxLength(200);
+        block.setyLength(16);
+        block.setzLength(200);
+        result.add(block);
+        return result;
+    }
+
+    private Collection<Block> centralBlocksOnBlocks() {
+        final Collection<Block> result = new HashSet<>();
+
+        Coords center = new Coords(0, 24, 250);
+        Block block = new Block(center);
+        block.setxLength(200);
+        block.setyLength(16);
+        block.setzLength(100);
+        result.add(block);
+
+        center = new Coords(0, 24, -250);
+        block = new Block(center);
+        block.setxLength(200);
+        block.setyLength(16);
+        block.setzLength(100);
+        result.add(block);
+
+        center = new Coords(250, 24, 0);
+        block = new Block(center);
+        block.setxLength(100);
+        block.setyLength(16);
+        block.setzLength(200);
+        result.add(block);
+
+        center = new Coords(-250, 24, 0);
+        block = new Block(center);
+        block.setxLength(100);
+        block.setyLength(16);
+        block.setzLength(200);
+        result.add(block);
+
+        return result;
+    }
+
+
+
 
 }

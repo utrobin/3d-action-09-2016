@@ -15,7 +15,7 @@ public class GameUser {
     private final UserProfile userProfile;
     private Coords position;
     private int hp = 100;
-    public static final int SHOT_REDUCING = 35;
+    public static final int SHOT_REDUCING = 135;
     private boolean wasShot;
     private final Set<VictimModel> victims = new HashSet<>();
 

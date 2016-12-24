@@ -113,15 +113,11 @@ public class ClientSnapService {
     }
 
     private boolean noWallsBetween(Coords killer, Coords enemy, MyVector camera) {
-        final List<Block> blocks = blockService.getBlocks();
+        final Set<Block> blocks = blockService.getBlocks();
         for (Block block: blocks) {
-            LOGGER.info("------------------------------------");
-            LOGGER.info("Сamera: ({}, {}, {})", camera.getX(), camera.getY(), camera.getZ());
-            LOGGER.info("Player: ({}, {}, {})", killer.x, killer.y, killer.z);
             Ray shotRay = new Ray(camera, killer);
             Double distanceToBlock = block.isOnTheWay(shotRay);
             if (distanceToBlock != null) {
-                LOGGER.info("ON THE WAY");
                 double distanceToEnemy = killer.getDistanceBetween(enemy);
                 if (distanceToBlock < distanceToEnemy) {
                     return false;
