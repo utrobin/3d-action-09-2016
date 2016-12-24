@@ -118,7 +118,7 @@ public class ClientSnapService {
             Ray shotRay = new Ray(camera, killer);
             Double distanceToBlock = block.isOnTheWay(shotRay);
             if (distanceToBlock != null) {
-                double distanceToEnemy = killer.getDistanceBetween(enemy);
+                final double distanceToEnemy = killer.getDistanceBetween(enemy);
                 if (distanceToBlock < distanceToEnemy) {
                     return false;
                 }

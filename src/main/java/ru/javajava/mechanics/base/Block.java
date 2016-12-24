@@ -71,14 +71,10 @@ public class Block {
     private double getClosestXPlane(Coords point) {
         final double first = center.x + xRadius;
         final double second = center.x - xRadius;
-        LOGGER.info("--------");
-        LOGGER.info("X Planes: x={} and x={}", first, second);
         if (Math.abs(point.x - first) < Math.abs(point.x - second)) {
-            LOGGER.info("Choosed first!");
             return first;
         }
         else {
-            LOGGER.info("Choosed second!");
             return second;
         }
     }
@@ -90,14 +86,10 @@ public class Block {
     private double getClosestZPlane(Coords point) {
         final double first = center.z + zRadius;
         final double second = center.z - zRadius;
-        LOGGER.info("--------");
-        LOGGER.info("Z Planes: z={} and z={}", first, second);
         if (Math.abs(point.z - first) < Math.abs(point.z - second)) {
-            LOGGER.info("Choosed first!");
             return first;
         }
         else {
-            LOGGER.info("Choosed second!");
             return second;
         }
     }
@@ -168,20 +160,23 @@ public class Block {
         }
         Coords intersectionY = getIntersectionPointWithY(ray);
         Coords intersectionZ = getIntersectionPointWithZ(ray);
-        boolean onTheWay =  isInside(intersectionX) || isInside(intersectionY) || isInside(intersectionZ);
-        if (!onTheWay) {
+        boolean xInside = isInside(intersectionX);
+        boolean yInside = isInside(intersectionY);
+        boolean zInside = isInside(intersectionZ);
+
+        if (!(xInside || yInside || zInside)) {
             return null;
         }
         double min = 100000;
-        if (intersectionX != null && intersectionX.getDistanceBetween(ray.getPoint()) < min) {
+        if (intersectionX != null && xInside && intersectionX.getDistanceBetween(ray.getPoint()) < min) {
             min = intersectionX.getDistanceBetween(ray.getPoint());
         }
 
-        if (intersectionY != null && intersectionY.getDistanceBetween(ray.getPoint()) < min) {
+        if (intersectionY != null && yInside && intersectionY.getDistanceBetween(ray.getPoint()) < min) {
             min = intersectionY.getDistanceBetween(ray.getPoint());
         }
 
-        if (intersectionZ != null && intersectionZ.getDistanceBetween(ray.getPoint()) < min) {
+        if (intersectionZ != null && zInside && intersectionZ.getDistanceBetween(ray.getPoint()) < min) {
             min = intersectionZ.getDistanceBetween(ray.getPoint());
         }
         return min;
