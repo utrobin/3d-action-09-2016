@@ -15,7 +15,7 @@ public class GameSession {
     private final Long sessionId;
     private final Set<GameUser> players = new HashSet<>();
 
-    public static final int MAX_PLAYERS = 16;
+    public static final int MAX_PLAYERS = 20;
 
     public GameSession() {
         this.sessionId = ID_GENERATOR.getAndIncrement();

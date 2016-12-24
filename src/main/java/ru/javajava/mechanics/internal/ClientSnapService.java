@@ -118,8 +118,11 @@ public class ClientSnapService {
             Ray shotRay = new Ray(camera, killer);
             Double distanceToBlock = block.isOnTheWay(shotRay);
             if (distanceToBlock != null) {
+                LOGGER.info("Block detected! Distance: {}", distanceToBlock);
                 final double distanceToEnemy = killer.getDistanceBetween(enemy);
+                LOGGER.info("Distance to player: {}", distanceToEnemy);
                 if (distanceToBlock < distanceToEnemy) {
+                    LOGGER.info("Shot in wall!!");
                     return false;
                 }
             }
