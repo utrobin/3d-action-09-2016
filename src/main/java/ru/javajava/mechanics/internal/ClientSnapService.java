@@ -75,6 +75,8 @@ public class ClientSnapService {
         final Coords myPosition = snap.getPosition();
 
         final Coords cameraDirection  = snap.getCamera();
+        cameraDirection.y *= -1; // Из-за непоняток с вертикальной коодинатой
+        
         final MyVector currentShot = new MyVector(cameraDirection);
 
         for (GameUser player: players) {
