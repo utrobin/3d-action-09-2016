@@ -87,6 +87,9 @@ public class ClientSnapService {
             }
 
             final MyVector idealShot = new MyVector(enemyPosition.subtract(myPosition));
+            LOGGER.info("------------------------------");
+            LOGGER.info("Ideal shot: ({}, {}, {})", idealShot.getX(), idealShot.getY(), idealShot.getZ());
+            LOGGER.info("My shot: ({}, {}, {})", currentShot.getX(), currentShot.getY(), currentShot.getZ());
 
             final double distance = enemyPosition.getDistanceBetween(myPosition);
             final double hypotenuse = Math.sqrt(distance*distance + RADIUS*RADIUS);
@@ -98,6 +101,7 @@ public class ClientSnapService {
                 if (!noWallsBetween(myPosition, enemyPosition, currentShot)) {
                     continue;
                 }
+                LOGGER.info("Shot in target!");
                 final double shotLenght = distance / cos;
                 final double distanceFromEnemyCenter =
                         Math.sqrt(shotLenght*shotLenght - distance*distance);
@@ -118,9 +122,7 @@ public class ClientSnapService {
             Ray shotRay = new Ray(camera, killer);
             Double distanceToBlock = block.isOnTheWay(shotRay);
             if (distanceToBlock != null) {
-                LOGGER.info("Block detected! Distance: {}", distanceToBlock);
                 final double distanceToEnemy = killer.getDistanceBetween(enemy);
-                LOGGER.info("Distance to player: {}", distanceToEnemy);
                 if (distanceToBlock < distanceToEnemy) {
                     LOGGER.info("Shot in wall!!");
                     return false;
